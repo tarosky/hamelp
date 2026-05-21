@@ -1,8 +1,8 @@
 # Hamelp
 
-Contributors: Takahashi_Fumiki, hametuha  
+Contributors: hametuha, Takahashi_Fumiki    
 Tags: faq,help  
-Tested up to: 6.9  
+Tested up to: 7.0  
 Stable Tag: 1.0.4  
 License: GPL 3.0 or later  
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -26,9 +26,11 @@ This plugin will provide...
 ### AI Overview
 
 AI Overview answers user questions based on your FAQ content using a large language model.
-It uses [wp-ai-client](https://packagist.org/packages/wordpress/wp-ai-client) (experimental) bundled via Composer, which requires an AI service to be configured in WordPress. Since wp-ai-client is still experimental, its API may change in future releases.
+It uses the [wp-ai-client](https://github.com/WordPress/wp-ai-client) bundled with WordPress core since WordPress 7.0, which requires an AI service to be configured in WordPress.
 
-You can configure AI behavior and rate limiting from **Settings > Hamelp** in the admin panel.
+**Requirements:** AI Overview requires **WordPress 7.0 or later**. On older WordPress versions, the AI Overview block and template function will still appear in the editor and on the front-end, but the search form will not work (the REST endpoint that powers it is disabled). Other features of this plugin (FAQ custom post type, incremental search, shortcode) continue to work on WordPress 6.6+. Upgrade WordPress to 7.0 to enable AI Overview.
+
+You can configure AI behavior and rate limiting from **Settings > Hamelp** in the admin panel. The settings page also includes a **Rebuild Catalog Now** button to manually refresh the FAQ catalog used as LLM context.
 
 #### Using the Block
 
@@ -88,6 +90,13 @@ Install itself is easy. Auto install from admin panel is recommended. Search wit
 You can contribute to our github repo. Any [issues](https://github.com/hametuha/hamelp/issues) or [PRs](https://github.com/hametuha/hamelp/pulls) are welcomed.
 
 ## Changelog
+
+### 2.2.0
+
+- Remove bundled [wp-ai-client](https://github.com/WordPress/wp-ai-client) Composer dependency. AI Overview now uses the wp-ai-client bundled with WordPress core, which requires **WordPress 7.0 or later**.
+- On WordPress versions earlier than 7.0, the AI Overview block and search form still render but submissions fail (no REST route). FAQ custom post type, incremental search, and other features remain functional.
+- Auto-rebuild the FAQ catalog on plugin activation, so the AI Overview works out of the box without manually running `wp hamelp rebuild`.
+- Add a **Rebuild Catalog Now** button to the settings page for manual catalog refresh.
 
 ### 2.1.0
 

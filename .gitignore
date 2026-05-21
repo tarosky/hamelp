@@ -8,6 +8,7 @@ node_modules/
 *.sql
 *.tar.gz
 *.zip
+*.cache
 /vendor/
 wp-dependencies.json
 tmp/

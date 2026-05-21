@@ -8,7 +8,6 @@
 namespace Hametuha\Hamelp\Services;
 
 use Hametuha\Hamelp\Hooks\Settings;
-use WordPress\AI_Client\AI_Client;
 
 /**
  * Service class for FAQ catalog-based AI response generation.
@@ -55,7 +54,7 @@ class FaqSearchService {
 
 		$system_prompt = $this->get_system_prompt( $context );
 
-		$response = AI_Client::prompt_with_wp_error( $query )
+		$response = wp_ai_client_prompt( $query )
 			->using_system_instruction( $system_prompt )
 			->using_temperature( 0.3 )
 			->as_json_response()

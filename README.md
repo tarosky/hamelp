@@ -64,16 +64,32 @@ The function automatically enqueues the required JavaScript and CSS assets.
 
 ### Search Box
 
+The incremental FAQ search box is available in three forms.
+
+#### Using the Block
+
+Add the **FAQ Search Box** block in the block editor. The block has the following options:
+
+-   **Label** — Input placeholder text.
+-   **Button Text** — Submit button label.
+
+#### Using the Shortcode
+
 You can use shortcode `hamelp-search` in page content.
 
 <pre>
 [hamelp-search label='Enter your question here.'][/hamelp-search]
 </pre>
 
-And you can call in your theme altenatively.
+#### Using the Template Function
+
+You can also call `hamelp_render_search_box()` directly from your theme templates:
 
 <pre>
-&lt;?php echo do_shortcode( '[hamelp-search][/hamelp-search]' ) ?&gt;
+&lt;?php echo hamelp_render_search_box( [
+    'label' => 'Enter your question here.',
+    'btn'   => 'Search',
+] ); ?&gt;
 </pre>
 
 ## Installation
@@ -90,6 +106,11 @@ Install itself is easy. Auto install from admin panel is recommended. Search wit
 You can contribute to our github repo. Any [issues](https://github.com/hametuha/hamelp/issues) or [PRs](https://github.com/hametuha/hamelp/pulls) are welcomed.
 
 ## Changelog
+
+### 2.3.0
+
+- Add **FAQ Search Box** block (`hamelp/search-box`). The existing `[hamelp-search]` shortcode continues to work and now shares the same render logic.
+- Expose `hamelp_render_search_box()` as a public template function so themes can render the search box without going through the shortcode parser.
 
 ### 2.2.0
 

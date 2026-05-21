@@ -161,6 +161,72 @@ function hamelp_register_blocks() {
 add_action( 'init', 'hamelp_register_blocks' );
 
 /**
+ * Render FAQ incremental search box.
+ *
+ * Use this in theme templates or block render templates to output the FAQ
+ * incremental search form. The shortcode `[hamelp-search]` and the
+ * `hamelp/search-box` block both delegate to this function.
+ *
+ * @param array $args {
+ *     Optional. Search box arguments.
+ *
+ *     @type string $label         Input placeholder text. Default 'Enter keyword and hit search.'.
+ *     @type string $btn           Submit button label. Default 'Search'.
+ *     @type string $wrapper_attrs Pre-built wrapper attributes string (used by block render).
+ * }
+ * @return string HTML output.
+ */
+function hamelp_render_search_box( $args = [] ) {
+	static $localized = false;
+
+	$args = wp_parse_args(
+		$args,
+		[
+			'label'         => __( 'Enter keyword and hit search.', 'hamelp' ),
+			'btn'           => __( 'Search', 'hamelp' ),
+			'wrapper_attrs' => '',
+		]
+	);
+
+	wp_enqueue_script( 'hamelp-incsearch' );
+	wp_enqueue_style( 'hamelp-incsearch' );
+	if ( ! $localized ) {
+		wp_localize_script(
+			'hamelp-incsearch',
+			'HamelpIncSearch',
+			[
+				'endpoint' => rest_url( '/wp/v2/faq' ),
+				'found'    => __( 'Found Posts:', 'hamelp' ),
+				'notFound' => __( 'No posts found. Please change the query.', 'hamelp' ),
+			]
+		);
+		$localized = true;
+	}
+
+	$post_type_inputs = '';
+	foreach ( array_keys( \Hametuha\Hamelp\Hooks\PostType::get()->get_post_types() ) as $post_type ) {
+		$post_type_inputs .= sprintf( '<input type="hidden" name="post_type" value="%s" />', esc_attr( $post_type ) );
+	}
+
+	$query  = get_search_query();
+	$action = esc_url( apply_filters( 'hamelp_endpoint', home_url( '' ) ) );
+
+	if ( empty( $args['wrapper_attrs'] ) ) {
+		$args['wrapper_attrs'] = 'class="hamelp-search-box"';
+	}
+
+	return sprintf(
+		'<form %1$s action="%2$s">%3$s<div class="input-group"><input type="search" class="form-control hamelp-search-input" name="s" placeholder="%4$s" value="%5$s" /><button class="btn btn-secondary hamelp-search-button" type="submit">%6$s</button></div><div class="hamelp-result-wrapper"><div class="hamelp-result list-group"></div></div></form>',
+		$args['wrapper_attrs'],
+		$action,
+		$post_type_inputs,
+		esc_attr( $args['label'] ),
+		esc_attr( $query ),
+		esc_html( $args['btn'] )
+	);
+}
+
+/**
  * Render AI Overview widget.
  *
  * Use this in theme templates to output the AI FAQ search form.

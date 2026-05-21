@@ -1,0 +1,28 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "hamelp/search-box",
+	"title": "FAQ Search Box",
+	"category": "widgets",
+	"icon": "search",
+	"description": "Incremental search box for FAQ posts.",
+	"textdomain": "hamelp",
+	"attributes": {
+		"label": {
+			"type": "string",
+			"default": "Enter keyword and hit search."
+		},
+		"btn": {
+			"type": "string",
+			"default": "Search"
+		}
+	},
+	"supports": {
+		"html": false,
+		"align": [ "wide", "full" ]
+	},
+	"editorScript": "file:./index.js",
+	"style": "hamelp-incsearch",
+	"viewScript": "hamelp-incsearch",
+	"render": "file:./render.php"
+}

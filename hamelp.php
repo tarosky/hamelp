@@ -37,6 +37,21 @@ function hamelp_init() {
 }
 add_action( 'plugins_loaded', 'hamelp_init' );
 
+/**
+ * Plugin activation handler.
+ *
+ * Schedules an immediate FAQ catalog rebuild via wp-cron so the catalog is
+ * populated on first use without requiring the user to manually save an FAQ.
+ * The actual rebuild runs on the next page load after the cron hook has been
+ * registered (during plugin init).
+ */
+function hamelp_activate() {
+	if ( ! wp_next_scheduled( 'hamelp_rebuild_faq_catalog' ) ) {
+		wp_schedule_single_event( time(), 'hamelp_rebuild_faq_catalog' );
+	}
+}
+register_activation_hook( __FILE__, 'hamelp_activate' );
+
 
 /**
  * Register all file in wp-dependencies.json

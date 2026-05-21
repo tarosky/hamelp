@@ -9,7 +9,6 @@ namespace Hametuha\Hamelp\Hooks;
 
 use Hametuha\Hamelp\Pattern\Singleton;
 use Hametuha\Hamelp\Services\FaqSearchService;
-use WordPress\AI_Client\AI_Client;
 
 /**
  * Class AiOverview
@@ -24,12 +23,9 @@ class AiOverview extends Singleton {
 	protected function init() {
 		// wp-ai-client is bundled in WordPress 7.0+. If it's not available
 		// (older WP), this feature is disabled silently.
-		if ( ! class_exists( AI_Client::class ) ) {
+		if ( ! function_exists( 'wp_ai_client_prompt' ) ) {
 			return;
 		}
-
-		// Initialize wp-ai-client
-		add_action( 'init', [ AI_Client::class, 'init' ] );
 
 		// Register REST API endpoint
 		add_action( 'rest_api_init', [ $this, 'register_routes' ] );
@@ -185,7 +181,7 @@ class AiOverview extends Singleton {
 		$query = $request->get_param( 'query' );
 
 		// Check if AI is available
-		$prompt = AI_Client::prompt_with_wp_error( $query );
+		$prompt = wp_ai_client_prompt( $query );
 		if ( ! $prompt->is_supported_for_text_generation() ) {
 			return new \WP_Error(
 				'ai_unavailable',

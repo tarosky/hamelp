@@ -8,6 +8,7 @@
 namespace Hametuha\Hamelp\Hooks;
 
 use Hametuha\Hamelp\Pattern\Singleton;
+use Hametuha\Hamelp\Services\FaqCatalogBuilder;
 
 /**
  * Registers Hamelp settings page and fields.
@@ -43,11 +44,44 @@ class Settings extends Singleton {
 	const RATE_PREFIX = 'hamelp_rate_';
 
 	/**
+	 * Action name for manual catalog rebuild form submission.
+	 *
+	 * @var string
+	 */
+	const REBUILD_ACTION = 'hamelp_rebuild_catalog';
+
+	/**
 	 * Initialize hooks.
 	 */
 	protected function init() {
 		add_action( 'admin_menu', [ $this, 'add_menu_page' ] );
 		add_action( 'admin_init', [ $this, 'register_settings' ] );
+		add_action( 'admin_post_' . self::REBUILD_ACTION, [ $this, 'handle_rebuild' ] );
+	}
+
+	/**
+	 * Handle manual catalog rebuild form submission.
+	 */
+	public function handle_rebuild() {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_die( esc_html__( 'You do not have permission to rebuild the catalog.', 'hamelp' ), '', [ 'response' => 403 ] );
+		}
+		check_admin_referer( self::REBUILD_ACTION );
+
+		$builder = new FaqCatalogBuilder();
+		$catalog = $builder->rebuild();
+
+		wp_safe_redirect(
+			add_query_arg(
+				[
+					'page'    => self::PAGE_SLUG,
+					'rebuilt' => 1,
+					'count'   => count( $catalog ),
+				],
+				admin_url( 'options-general.php' )
+			)
+		);
+		exit;
 	}
 
 	/**
@@ -223,9 +257,59 @@ class Settings extends Singleton {
 	 * Render settings page.
 	 */
 	public function render_page() {
+		$builder = new FaqCatalogBuilder();
+		$catalog = $builder->get_catalog();
+		$updated = $builder->get_last_updated();
 		?>
 		<div class="wrap">
 			<h1><?php esc_html_e( 'Hamelp Settings', 'hamelp' ); ?></h1>
+
+			<?php if ( isset( $_GET['rebuilt'] ) ) : // phpcs:ignore WordPress.Security.NonceVerification.Recommended ?>
+				<div class="notice notice-success is-dismissible">
+					<p>
+						<?php
+						printf(
+							/* translators: %d: Number of FAQ entries in the catalog. */
+							esc_html__( 'FAQ catalog rebuilt. %d entries.', 'hamelp' ),
+							isset( $_GET['count'] ) ? (int) $_GET['count'] : 0 // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+						);
+						?>
+					</p>
+				</div>
+			<?php endif; ?>
+
+			<h2><?php esc_html_e( 'FAQ Catalog', 'hamelp' ); ?></h2>
+			<p>
+				<?php
+				printf(
+					/* translators: %d: Number of FAQ entries in the catalog. */
+					esc_html__( 'Catalog entries: %d', 'hamelp' ),
+					count( $catalog )
+				);
+				if ( $updated ) {
+					$date = wp_date(
+						get_option( 'date_format' ) . ' ' . get_option( 'time_format' ),
+						$updated
+					);
+					echo '<br>';
+					printf(
+						/* translators: %s: Last updated date and time. */
+						esc_html__( 'Last updated: %s', 'hamelp' ),
+						esc_html( $date )
+					);
+				} else {
+					echo '<br><em>' . esc_html__( 'Catalog has never been built.', 'hamelp' ) . '</em>';
+				}
+				?>
+			</p>
+			<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
+				<?php wp_nonce_field( self::REBUILD_ACTION ); ?>
+				<input type="hidden" name="action" value="<?php echo esc_attr( self::REBUILD_ACTION ); ?>">
+				<?php submit_button( __( 'Rebuild Catalog Now', 'hamelp' ), 'secondary', 'submit', false ); ?>
+			</form>
+
+			<hr>
+
 			<form method="post" action="<?php echo esc_url( admin_url( 'options.php' ) ); ?>">
 				<?php
 				settings_fields( self::OPTION_GROUP );

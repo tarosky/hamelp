@@ -3,27 +3,22 @@
  * Stub for WordPress core's bundled wp-ai-client (WordPress 7.0+).
  *
  * Only the subset of the API used by this plugin is declared here.
- * Used by PHPStan when wp-ai-client is not present as a composer dependency.
+ * Used by PHPStan when running on an environment without the bundled core files.
  */
 
-namespace WordPress\AI_Client;
+/**
+ * Creates a new AI prompt builder using the default provider registry.
+ */
+function wp_ai_client_prompt( $prompt = null ): \WP_AI_Client_Prompt_Builder {}
 
-class AI_Client {
-	public static function init(): void {}
-
-	public static function prompt_with_wp_error( string $query ): \WordPress\AI_Client\Builders\Prompt_Builder_With_WP_Error {}
-}
-
-namespace WordPress\AI_Client\Builders;
-
-class Prompt_Builder_With_WP_Error {
-	public function is_supported_for_text_generation(): bool {}
-
+class WP_AI_Client_Prompt_Builder {
 	public function using_system_instruction( string $instruction ): self {}
 
 	public function using_temperature( float $temperature ): self {}
 
-	public function as_json_response(): self {}
+	public function as_json_response( ?array $schema = null ): self {}
+
+	public function is_supported_for_text_generation(): bool {}
 
 	/**
 	 * @return string|\WP_Error

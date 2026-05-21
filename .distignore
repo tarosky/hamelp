@@ -31,6 +31,7 @@ phpcs.ruleset.xml
 phpstan.neon
 phpstan-baseline.neon
 phpstan-bootstrap.php
+phpstan
 README.md
 wp-cli.local.yml
 yarn.lock

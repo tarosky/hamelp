@@ -2,20 +2,54 @@
  * Incremental search styles for Hamelp
  *
  * @handle hamelp-incsearch
+ *
+ * Positional rules use normal selectors so they always apply.
+ * Visual fallbacks are wrapped in :where() so specificity is 0 — any theme
+ * styles or Bootstrap's .list-group/.list-group-item win automatically.
  */
 
 .hamelp {
-	&-search-box{
+	&-search-box {
 		position: relative;
 		margin: 2em 0;
 	}
-	&-result{
-		&-wrapper{
+
+	&-result {
+		&-wrapper {
 			position: absolute;
 			z-index: 100;
 			width: 100%;
 			left: 0;
 			top: 100%;
 		}
+	}
+}
+
+:where(.hamelp-result) {
+	background: #fff;
+
+	&:empty {
+		display: none;
+	}
+}
+
+:where(.hamelp-result-link),
+:where(.hamelp-message) {
+	display: block;
+	padding: 0.5em 1em;
+	border: 1px solid rgba(0, 0, 0, 0.125);
+	border-bottom-width: 0;
+	color: inherit;
+	text-decoration: none;
+
+	&:last-child {
+		border-bottom-width: 1px;
+	}
+}
+
+:where(.hamelp-result-link) {
+	&:hover,
+	&:focus {
+		background: rgba(0, 0, 0, 0.05);
 	}
 }

@@ -1,0 +1,19 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Offset ''default'' on array\{attr\: string, label\: string, type\: string, default\: string\} in isset\(\) always exists and is not nullable\.$#'
+			identifier: isset.offset
+			count: 1
+			path: app/Hametuha/Hamelp/Pattern/ShortCode.php
+
+		-
+			message: '#^Call to function is_string\(\) with string will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: app/Hametuha/Hamelp/Services/FaqSearchService.php
+
+		-
+			message: '#^Class WP_Post referenced with incorrect case\: WP_post\.$#'
+			identifier: class.nameCase
+			count: 1
+			path: hamelp.php

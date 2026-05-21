@@ -22,6 +22,12 @@ class AiOverview extends Singleton {
 	 * Initialize hooks.
 	 */
 	protected function init() {
+		// wp-ai-client is bundled in WordPress 7.0+. If it's not available
+		// (older WP), this feature is disabled silently.
+		if ( ! class_exists( AI_Client::class ) ) {
+			return;
+		}
+
 		// Initialize wp-ai-client
 		add_action( 'init', [ AI_Client::class, 'init' ] );
 

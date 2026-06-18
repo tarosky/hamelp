@@ -109,7 +109,7 @@ You can contribute to our github repo. Any [issues](https://github.com/hametuha/
 
 ### 2.2.3
 
-- Change CSS structure `--wp--preset--color--*` to fit with Theme design. Thank you [bissy](https://profiles.wordpress.org/bissy/) for Pull reuests.
+- Change CSS structure `--wp--preset--color--*` to fit with Theme design. Thank you [bissy](https://profiles.wordpress.org/bissy/) for Pull requests.
 
 ### 2.2.2
 

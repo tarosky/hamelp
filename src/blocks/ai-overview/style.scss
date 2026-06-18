@@ -57,7 +57,7 @@
 
 :where(.hamelp-ai-overview__button) {
 	padding: 0.75rem 1.5rem;
-	border: none;
+	border: 1px solid transparent;
 	border-radius: var(--hamelp-radius, 3px);
 	background: var(--hamelp-button-bg, #1571da);
 	color: var(--hamelp-on-accent);

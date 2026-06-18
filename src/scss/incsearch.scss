@@ -117,6 +117,7 @@
 :where(.hamelp-result-link) {
 	&:hover,
 	&:focus {
+		background: rgba(0, 0, 0, 0.05);
 		background: color-mix(in srgb, var(--hamelp-accent, #000), transparent 92%);
 	}
 }

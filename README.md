@@ -3,7 +3,7 @@
 Contributors: hametuha, Takahashi_Fumiki    
 Tags: faq,help  
 Tested up to: 7.0  
-Stable Tag: 1.0.4  
+Stable Tag: 2.2.3  
 License: GPL 3.0 or later  
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -107,7 +107,11 @@ You can contribute to our github repo. Any [issues](https://github.com/hametuha/
 
 ## Changelog
 
-### 2.3.0
+### 2.2.3
+
+- Change CSS structure `--wp--preset--color--*` to fit with Theme design. Thank you [bissy](https://profiles.wordpress.org/bissy/) for Pull reuests.
+
+### 2.2.2
 
 - Add **FAQ Search Box** block (`hamelp/search-box`). The existing `[hamelp-search]` shortcode continues to work and now shares the same render logic.
 - Expose `hamelp_render_search_box()` as a public template function so themes can render the search box without going through the shortcode parser.

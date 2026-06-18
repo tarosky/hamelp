@@ -92,6 +92,7 @@
 	display: flex;
 	align-items: center;
 	gap: 0.5rem;
+	background: #f5f5f5;
 	background: color-mix(in srgb, var(--hamelp-accent), transparent 94%);
 }
 
@@ -101,11 +102,13 @@
 }
 
 :where(.hamelp-ai-overview.has-result .hamelp-ai-overview__result) {
+	background: #f0f7fc;
 	background: color-mix(in srgb, var(--hamelp-accent), transparent 94%);
 	border: 1px solid var(--hamelp-accent);
 }
 
 :where(.hamelp-ai-overview.has-error .hamelp-ai-overview__result) {
+	background: #fef7f1;
 	background: color-mix(in srgb, var(--hamelp-error), transparent 94%);
 	border: 1px solid var(--hamelp-error);
 }
@@ -129,6 +132,7 @@
 :where(.hamelp-ai-overview__sources) {
 	margin-top: 1rem;
 	padding-top: 1rem;
+	border-top: 1px solid rgba(0, 115, 170, 0.2);
 	border-top: 1px solid color-mix(in srgb, var(--hamelp-accent), transparent 80%);
 	font-size: 0.9em;
 }
@@ -179,7 +183,7 @@
 	display: inline-block;
 	width: 1em;
 	height: 1em;
-	border: 2px solid color-mix(in srgb, var(--hamelp-accent), transparent 70%);
+	border: 2px solid #ccc;
 	border-top-color: var(--hamelp-accent);
 	border-radius: 50%;
 	animation: hamelp-spin 0.8s linear infinite;

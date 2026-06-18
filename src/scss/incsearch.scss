@@ -25,7 +25,10 @@
 		--hamelp-button-bg: var(--hamelp-accent);
 		// Hover shade derived from the button color; kept in sync with the AI
 		// Overview block so both submit buttons darken the same way on hover.
-		--hamelp-accent-hover: color-mix(in srgb, var(--hamelp-button-bg, #1571da), #000 18%);
+		--hamelp-accent-hover: #005a87;
+		@supports (background: color-mix(in srgb, red, blue)) {
+			--hamelp-accent-hover: color-mix(in srgb, var(--hamelp-button-bg, #1571da), #000 18%);
+		}
 
 		position: relative;
 		margin: 2em 0;

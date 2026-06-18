@@ -28,7 +28,10 @@
 	--hamelp-button-bg: var(--hamelp-accent);
 	// Hover shade derived from the button color; the plain background
 	// declaration below wins on engines without color-mix() support.
-	--hamelp-accent-hover: color-mix(in srgb, var(--hamelp-button-bg, #1571da), #000 18%);
+	--hamelp-accent-hover: #005a87;
+	@supports (background: color-mix(in srgb, red, blue)) {
+		--hamelp-accent-hover: color-mix(in srgb, var(--hamelp-button-bg, #1571da), #000 18%);
+	}
 }
 
 :where(.hamelp-ai-overview__form) {

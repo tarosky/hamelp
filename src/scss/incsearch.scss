@@ -6,10 +6,30 @@
  * Positional rules use normal selectors so they always apply.
  * Visual fallbacks are wrapped in :where() so specificity is 0 — any theme
  * styles or Bootstrap's .list-group/.list-group-item win automatically.
+ *
+ * Colors derive from the active theme's color presets (with fallbacks), so the
+ * search box adapts to any palette out of the box.
  */
 
 .hamelp {
 	&-search-box {
+		// Theme-aware tokens (override from your theme to re-skin).
+		--hamelp-accent: var(--wp--preset--color--primary, #1571da);
+		--hamelp-on-accent: var(--wp--preset--color--base, #fff);
+		--hamelp-surface: var(--wp--preset--color--base, #fff);
+		--hamelp-border: var(--wp--preset--color--contrast, rgba(0, 0, 0, 0.2));
+		// Shared control tokens (kept in sync with the AI Overview block so the
+		// input + button look identical across both blocks).
+		--hamelp-radius: 3px;
+		--hamelp-font-weight: 600;
+		--hamelp-button-bg: var(--hamelp-accent);
+		// Hover shade derived from the button color; kept in sync with the AI
+		// Overview block so both submit buttons darken the same way on hover.
+		--hamelp-accent-hover: #005a87;
+		@supports (background: color-mix(in srgb, red, blue)) {
+			--hamelp-accent-hover: color-mix(in srgb, var(--hamelp-button-bg, #1571da), #000 18%);
+		}
+
 		position: relative;
 		margin: 2em 0;
 	}
@@ -25,8 +45,55 @@
 	}
 }
 
+// Presentable defaults for the input + button so the box looks fine on block
+// themes without Bootstrap. Wrapped in :where() so theme/Bootstrap rules win.
+:where(.hamelp-search-box .input-group) {
+	display: flex;
+	gap: 0.5rem;
+}
+
+// Input/button sizing is kept identical to the AI Overview block so the two
+// blocks line up (padding 0.75rem / 0.75rem 1.5rem, font-size 1rem).
+:where(.hamelp-search-input) {
+	flex: 1 1 auto;
+	min-width: 0;
+	padding: 0.75rem;
+	border: 1px solid var(--hamelp-border);
+	border-radius: var(--hamelp-radius, 3px);
+	background: var(--hamelp-surface);
+	color: inherit;
+	font-size: 1rem;
+}
+
+:where(.hamelp-search-input:focus-visible) {
+	outline: 2px solid var(--hamelp-accent);
+	outline-offset: 2px;
+}
+
+:where(.hamelp-search-button) {
+	flex: 0 0 auto;
+	padding: 0.75rem 1.5rem;
+	border: 1px solid var(--hamelp-button-bg, #1571da);
+	border-radius: var(--hamelp-radius, 3px);
+	background: var(--hamelp-button-bg, #1571da);
+	color: var(--hamelp-on-accent);
+	font-size: 1rem;
+	font-weight: var(--hamelp-font-weight, 600);
+	cursor: pointer;
+	transition: background 0.2s ease;
+}
+
+:where(.hamelp-search-button:hover) {
+	background: var(--hamelp-accent-hover);
+}
+
+:where(.hamelp-search-button:focus-visible) {
+	outline: 2px solid var(--hamelp-accent);
+	outline-offset: 2px;
+}
+
 :where(.hamelp-result) {
-	background: #fff;
+	background: var(--hamelp-surface, #fff);
 
 	&:empty {
 		display: none;
@@ -37,7 +104,7 @@
 :where(.hamelp-message) {
 	display: block;
 	padding: 0.5em 1em;
-	border: 1px solid rgba(0, 0, 0, 0.125);
+	border: 1px solid var(--hamelp-border, rgba(0, 0, 0, 0.125));
 	border-bottom-width: 0;
 	color: inherit;
 	text-decoration: none;
@@ -51,5 +118,12 @@
 	&:hover,
 	&:focus {
 		background: rgba(0, 0, 0, 0.05);
+		background: color-mix(in srgb, var(--hamelp-accent, #000), transparent 92%);
 	}
+}
+
+// Keyboard focus stays visible by default but is overridable like everything else.
+:where(.hamelp-result-link:focus-visible) {
+	outline: 2px solid var(--hamelp-accent);
+	outline-offset: -2px;
 }

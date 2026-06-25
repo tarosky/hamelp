@@ -8,6 +8,7 @@
 namespace Hametuha\Hamelp\Hooks;
 
 use Hametuha\Hamelp\Pattern\Singleton;
+use Hametuha\Hamelp\Services\ConversationStore;
 use Hametuha\Hamelp\Services\FaqSearchService;
 
 /**
@@ -43,17 +44,23 @@ class AiOverview extends Singleton {
 				'callback'            => [ $this, 'handle_request' ],
 				'permission_callback' => [ $this, 'check_permission' ],
 				'args'                => [
-					'query'   => [
+					'query'           => [
 						'required'          => true,
 						'type'              => 'string',
 						'sanitize_callback' => 'sanitize_text_field',
 					],
-					'history' => [
+					'history'         => [
 						'required' => false,
 						'type'     => 'array',
 						'default'  => [],
 						// Items are associative arrays (role/content); sanitized
 						// and windowed in FaqSearchService::prepare_history().
+					],
+					'conversation_id' => [
+						'required'          => false,
+						'type'              => 'string',
+						'default'           => '',
+						'sanitize_callback' => 'sanitize_text_field',
 					],
 				],
 			]
@@ -207,6 +214,25 @@ class AiOverview extends Singleton {
 
 		// Increment rate counters on successful AI call.
 		$this->increment_rate_counters();
+
+		// Persist the exchange when conversation saving is enabled (opt-in).
+		// Done only after a successful answer so empty attempts are never stored.
+		$store = new ConversationStore();
+		if ( $store->is_enabled() ) {
+			$conversation_id = (string) $request->get_param( 'conversation_id' );
+			$saved           = $store->save_turn(
+				'' !== $conversation_id ? $conversation_id : null,
+				$query,
+				(string) $result['answer'],
+				$result['cited_ids'] ?? []
+			);
+			if ( ! empty( $saved['uuid'] ) ) {
+				$result['conversation_id'] = $saved['uuid'];
+			}
+		}
+
+		// cited_ids is internal; do not expose it in the API response.
+		unset( $result['cited_ids'] );
 
 		return rest_ensure_response( $result );
 	}

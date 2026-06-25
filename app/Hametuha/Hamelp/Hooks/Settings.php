@@ -251,6 +251,36 @@ class Settings extends Singleton {
 				]
 			);
 		}
+
+		// Conversation history (opt-in, disabled by default for privacy).
+		register_setting(
+			self::OPTION_GROUP,
+			'hamelp_save_conversations',
+			[
+				'type'              => 'string',
+				'sanitize_callback' => 'sanitize_text_field',
+				'default'           => '',
+			]
+		);
+
+		add_settings_section(
+			'hamelp_history_section',
+			__( 'Conversation History', 'hamelp' ),
+			[ $this, 'render_history_section' ],
+			self::PAGE_SLUG
+		);
+
+		add_settings_field(
+			'hamelp_save_conversations',
+			__( 'Save Conversations', 'hamelp' ),
+			[ $this, 'render_checkbox' ],
+			self::PAGE_SLUG,
+			'hamelp_history_section',
+			[
+				'option_name' => 'hamelp_save_conversations',
+				'description' => __( 'Store AI Overview conversations so you can review what visitors asked. Questions are saved to your database.', 'hamelp' ),
+			]
+		);
 	}
 
 	/**
@@ -338,6 +368,16 @@ class Settings extends Singleton {
 		printf(
 			'<p>%s</p>',
 			esc_html__( 'Protect the AI Overview endpoint from excessive usage. Each request costs LLM tokens.', 'hamelp' )
+		);
+	}
+
+	/**
+	 * Render conversation history section description.
+	 */
+	public function render_history_section() {
+		printf(
+			'<p>%s</p>',
+			esc_html__( 'Optionally keep a record of AI Overview conversations for question mining. Automatic deletion and privacy tools will be added in a future release.', 'hamelp' )
 		);
 	}
 

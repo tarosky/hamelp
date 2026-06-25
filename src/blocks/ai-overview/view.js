@@ -48,6 +48,9 @@ document.querySelectorAll( '.hamelp-ai-overview' ).forEach( ( container ) => {
 
 	// In-memory conversation history: [{ role: 'user'|'assistant', content }].
 	const history = [];
+	// Server-issued conversation id (only when saving is enabled). Sent back on
+	// follow-up turns so the whole conversation is appended to one record.
+	let conversationId = '';
 
 	form.addEventListener( 'submit', async ( e ) => {
 		e.preventDefault();
@@ -82,8 +85,17 @@ document.querySelectorAll( '.hamelp-ai-overview' ).forEach( ( container ) => {
 			const data = await apiFetch( {
 				path: '/hamelp/v1/ai-overview',
 				method: 'POST',
-				data: { query, history: sentHistory },
+				data: {
+					query,
+					history: sentHistory,
+					conversation_id: conversationId,
+				},
 			} );
+
+			// Remember the conversation id so later turns append to the same record.
+			if ( data.conversation_id ) {
+				conversationId = data.conversation_id;
+			}
 
 			// Parse markdown, then replace [ID:xxx] with source links.
 			const parsedAnswer = replaceIdReferences(

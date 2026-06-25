@@ -38,8 +38,9 @@ class FaqSearchService {
 		// No FAQs available.
 		if ( empty( $catalog ) ) {
 			return [
-				'answer'  => __( 'No FAQ content is available at this time.', 'hamelp' ),
-				'sources' => [],
+				'answer'    => __( 'No FAQ content is available at this time.', 'hamelp' ),
+				'sources'   => [],
+				'cited_ids' => [],
 			];
 		}
 
@@ -87,12 +88,14 @@ class FaqSearchService {
 		if ( ! $data || ! isset( $data['answer'] ) ) {
 			// JSON parse failed: treat response as plain text.
 			return [
-				'answer'  => $response,
-				'sources' => [],
+				'answer'    => $response,
+				'sources'   => [],
+				'cited_ids' => [],
 			];
 		}
 
-		// Build sources from cited IDs.
+		// Build sources from cited IDs. Restricted to the accessible catalog so
+		// inaccessible FAQs are never surfaced even if the model cites them.
 		$cited   = $data['cited_ids'] ?? [];
 		$sources = [];
 		foreach ( $catalog as $item ) {
@@ -106,9 +109,36 @@ class FaqSearchService {
 		}
 
 		return [
-			'answer'  => $data['answer'],
-			'sources' => $sources,
+			'answer'    => $data['answer'],
+			'sources'   => $sources,
+			'cited_ids' => wp_list_pluck( $sources, 'id' ),
 		];
+	}
+
+	/**
+	 * Resolve cited FAQ IDs into source link data.
+	 *
+	 * Used when rendering a stored conversation, where the in-memory catalog
+	 * is not available. Each ID is resolved to its current title and permalink.
+	 *
+	 * @param int[] $cited_ids FAQ post IDs.
+	 * @return array[] List of `['id' => int, 'title' => string, 'url' => string]`.
+	 */
+	public function resolve_sources( array $cited_ids ): array {
+		$sources = [];
+		foreach ( $cited_ids as $id ) {
+			$id   = (int) $id;
+			$post = get_post( $id );
+			if ( ! $post ) {
+				continue;
+			}
+			$sources[] = [
+				'id'    => $id,
+				'title' => get_the_title( $post ),
+				'url'   => (string) get_permalink( $post ),
+			];
+		}
+		return $sources;
 	}
 
 	/**

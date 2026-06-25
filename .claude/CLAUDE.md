@@ -165,3 +165,4 @@ hamelp/
 - `wp-dependencies.json` はビルド成果物だが、`.distignore` には入れない（PHPから読み込むため）
 - `composer.lock` はコミットする（依存関係の再現性のため。`composer.json` を変更したら必ず `composer install` で更新して一緒にコミットする）
 - `package-lock.json` はコミットする（アセットビルドの一貫性のため）
+- スクリーンショットなどの一時ファイルは `tmp/` に保存してください

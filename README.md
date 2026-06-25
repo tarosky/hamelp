@@ -1,18 +1,18 @@
 # Hamelp
 
-Contributors: hametuha, Takahashi_Fumiki    
+Contributors: tarosky, hametuha, Takahashi_Fumiki    
 Tags: faq,help  
 Tested up to: 7.0  
 Stable Tag: 2.2.3  
 License: GPL 3.0 or later  
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
-FAQ template plugin by Hametuha.
+AI powered FAQ and Help Document Management Plugin for WordPress. 
 
 ## Description
 
 This plugin add new custom post type 'FAQ'. With some functionality, you can build help center for your user.
-What is help center? We collect examples at our [github wiki](https://github.com/hametuha/hamelp/wiki).
+What is help center? We collect examples at our [github wiki](https://github.com/tarosky/hamelp/wiki).
 
 ### Creating Portal
 
@@ -103,9 +103,13 @@ Install itself is easy. Auto install from admin panel is recommended. Search wit
 
 ### How can I contribute?
 
-You can contribute to our github repo. Any [issues](https://github.com/hametuha/hamelp/issues) or [PRs](https://github.com/hametuha/hamelp/pulls) are welcomed.
+You can contribute to our github repo. Any [issues](https://github.com/tarosky/hamelp/issues) or [PRs](https://github.com/tarosky/hamelp/pulls) are welcomed.
 
 ## Changelog
+
+### 2.3.0
+
+- Change ownership to Tarosky.
 
 ### 2.2.3
 

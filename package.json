@@ -1,6 +1,6 @@
 {
 	"name": "hamelp",
-	"version": "1.0.4",
+	"version": "2.3.0",
 	"description": "FAQ generator for WordPress",
 	"scripts": {
 		"test": "RESULT=${PWD##*/} && wp-env run tests-cli ./wp-content/plugins/$RESULT/vendor/bin/phpunit -c ./wp-content/plugins/$RESULT/phpunit.xml.dist",
@@ -30,14 +30,14 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/hametuha/hamelp.git"
+		"url": "git+https://github.com/tarosky/hamelp.git"
 	},
-	"author": "Hametuha INC.",
+	"author": "Tarosky Inc.",
 	"license": "GPL-3.0",
 	"bugs": {
-		"url": "https://github.com/hametuha/hamelp/issues"
+		"url": "https://github.com/tarosky/hamelp/issues"
 	},
-	"homepage": "https://github.com/hametuha/hamelp",
+	"homepage": "https://github.com/tarosky/hamelp",
 	"devDependencies": {
 		"@kunoichi/grab-deps": "^3.0.0",
 		"@wordpress/env": "^10.38.0",

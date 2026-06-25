@@ -1,12 +1,12 @@
 {
-	"name": "hametuha/hamelp",
+	"name": "tarosky/hamelp",
 	"description": "FAQ generator for WordPress.",
 	"type": "wordpress-plugin",
 	"license": "GPL-3.0-or-later",
 	"authors": [
 		{
-			"name": "fumikito",
-			"email": "guy@hametuha.com"
+			"name": "Tarosky",
+			"email": "hi@tarosky.co.jp"
 		}
 	],
 	"scripts": {

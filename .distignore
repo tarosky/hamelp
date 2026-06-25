@@ -11,6 +11,7 @@
 .node-version
 .wp-env.json
 .DS_Store
+.wordpress-org
 Thumbs.db
 behat.yml
 bitbucket-pipelines.yml

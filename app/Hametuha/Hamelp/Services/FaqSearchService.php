@@ -8,6 +8,9 @@
 namespace Hametuha\Hamelp\Services;
 
 use Hametuha\Hamelp\Hooks\Settings;
+use WordPress\AiClient\Messages\DTO\MessagePart;
+use WordPress\AiClient\Messages\DTO\ModelMessage;
+use WordPress\AiClient\Messages\DTO\UserMessage;
 
 /**
  * Service class for FAQ catalog-based AI response generation.
@@ -21,10 +24,14 @@ class FaqSearchService {
 	 * Uses a catalog of all FAQs as context, letting the LLM
 	 * select relevant FAQs and generate a response in one call.
 	 *
-	 * @param string $query User's question.
+	 * The conversation is stateless: prior turns are supplied by the client
+	 * via $history on every request and are not persisted server-side.
+	 *
+	 * @param string  $query   User's question (the new turn).
+	 * @param array[] $history Prior conversation turns, each `['role' => 'user'|'assistant', 'content' => string]`.
 	 * @return array|\WP_Error Response with answer and sources, or error.
 	 */
-	public function generate_overview( string $query ) {
+	public function generate_overview( string $query, array $history = [] ) {
 		$builder = new FaqCatalogBuilder();
 		$catalog = $builder->get_accessible_catalog();
 
@@ -54,7 +61,19 @@ class FaqSearchService {
 
 		$system_prompt = $this->get_system_prompt( $context );
 
-		$response = wp_ai_client_prompt( $query )
+		// Build the message list: prior turns (windowed/sanitized) + the new question.
+		// The whole FAQ catalog stays in the system instruction, so a long
+		// conversation grows only by the history window, not the catalog.
+		$messages = [];
+		foreach ( $this->prepare_history( $history ) as $turn ) {
+			$part       = new MessagePart( $turn['content'] );
+			$messages[] = ( 'assistant' === $turn['role'] )
+				? new ModelMessage( [ $part ] )
+				: new UserMessage( [ $part ] );
+		}
+		$messages[] = new UserMessage( [ new MessagePart( $query ) ] );
+
+		$response = wp_ai_client_prompt( $messages )
 			->using_system_instruction( $system_prompt )
 			->using_temperature( 0.3 )
 			->as_json_response()
@@ -90,6 +109,53 @@ class FaqSearchService {
 			'answer'  => $data['answer'],
 			'sources' => $sources,
 		];
+	}
+
+	/**
+	 * Normalize, sanitize and window a client-supplied conversation history.
+	 *
+	 * The history is sent by the client on every request (stateless server), so
+	 * it must be treated as untrusted: only `user`/`assistant` roles are kept,
+	 * content is sanitized, empty turns are dropped, and the list is trimmed to
+	 * the most recent N entries to bound token cost.
+	 *
+	 * @param array $history Raw history from the request.
+	 * @return array[] Normalized turns, each `['role' => 'user'|'assistant', 'content' => string]`.
+	 */
+	public function prepare_history( array $history ): array {
+		$normalized = [];
+		foreach ( $history as $turn ) {
+			if ( ! is_array( $turn ) || ! isset( $turn['role'], $turn['content'] ) ) {
+				continue;
+			}
+			$role = (string) $turn['role'];
+			if ( ! in_array( $role, [ 'user', 'assistant' ], true ) ) {
+				continue;
+			}
+			$content = sanitize_textarea_field( (string) $turn['content'] );
+			if ( '' === $content ) {
+				continue;
+			}
+			$normalized[] = [
+				'role'    => $role,
+				'content' => $content,
+			];
+		}
+
+		/**
+		 * Maximum number of prior conversation turns (messages) sent to the LLM.
+		 *
+		 * Limits token cost on long conversations. Counts individual messages,
+		 * not exchanges (a Q + A pair is 2).
+		 *
+		 * @param int $window Default 10.
+		 */
+		$window = (int) apply_filters( 'hamelp_history_window', 10 );
+		if ( $window > 0 && count( $normalized ) > $window ) {
+			$normalized = array_slice( $normalized, -$window );
+		}
+
+		return $normalized;
 	}
 
 	/**
@@ -159,6 +225,7 @@ IMPORTANT RULES:
 - Only include IDs of FAQs you actually reference in cited_ids.
 - If no FAQ is relevant, provide a helpful answer with an empty cited_ids array.
 - Keep your response concise and helpful.
+- If earlier conversation turns are provided, use them as context and answer follow-up questions accordingly.
 - Respond in the same language as the user question.
 - If user information is provided, you may address them by name and tailor your response to their context (e.g., role, membership). Do not repeat their personal information back to them.
 

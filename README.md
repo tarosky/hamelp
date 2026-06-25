@@ -110,6 +110,8 @@ You can contribute to our github repo. Any [issues](https://github.com/tarosky/h
 ### 2.3.0
 
 - Change ownership to Tarosky.
+- AI Overview now supports **multi-turn conversations**. Follow-up questions keep the previous exchanges as context, and answers stack as a Q&A thread. Conversation history is held in the browser and sent with each request, so nothing is stored on the server.
+- Add `hamelp_history_window` filter to limit how many prior messages are sent to the LLM (default 10).
 
 ### 2.2.3
 

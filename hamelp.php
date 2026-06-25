@@ -287,11 +287,11 @@ function hamelp_render_ai_overview( $args = [] ) {
 
 	return sprintf(
 		'<div %s>
+	<div class="hamelp-ai-overview__thread" aria-live="polite"></div>
 	<form class="hamelp-ai-overview__form">
 		<input type="text" class="hamelp-ai-overview__input" placeholder="%s" required />
 		<button type="submit" class="hamelp-ai-overview__button">%s</button>
 	</form>
-	<div class="hamelp-ai-overview__result" aria-live="polite"></div>
 </div>',
 		$args['wrapper_attrs'],
 		esc_attr( $args['placeholder'] ),

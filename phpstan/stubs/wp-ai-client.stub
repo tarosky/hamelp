@@ -6,22 +6,51 @@
  * Used by PHPStan when running on an environment without the bundled core files.
  */
 
-/**
- * Creates a new AI prompt builder using the default provider registry.
- */
-function wp_ai_client_prompt( $prompt = null ): \WP_AI_Client_Prompt_Builder {}
-
-class WP_AI_Client_Prompt_Builder {
-	public function using_system_instruction( string $instruction ): self {}
-
-	public function using_temperature( float $temperature ): self {}
-
-	public function as_json_response( ?array $schema = null ): self {}
-
-	public function is_supported_for_text_generation(): bool {}
-
+namespace {
 	/**
-	 * @return string|\WP_Error
+	 * Creates a new AI prompt builder using the default provider registry.
+	 *
+	 * @param mixed $prompt Prompt string, message, or list of messages.
 	 */
-	public function generate_text() {}
+	function wp_ai_client_prompt( $prompt = null ): \WP_AI_Client_Prompt_Builder {}
+
+	class WP_AI_Client_Prompt_Builder {
+		public function using_system_instruction( string $instruction ): self {}
+
+		public function using_temperature( float $temperature ): self {}
+
+		public function as_json_response( ?array $schema = null ): self {}
+
+		public function is_supported_for_text_generation(): bool {}
+
+		/**
+		 * @return string|\WP_Error
+		 */
+		public function generate_text() {}
+	}
+}
+
+namespace WordPress\AiClient\Messages\DTO {
+	class MessagePart {
+		/**
+		 * @param mixed $content Text content or other supported part value.
+		 */
+		public function __construct( $content ) {}
+	}
+
+	class Message {}
+
+	class UserMessage extends Message {
+		/**
+		 * @param MessagePart[] $parts
+		 */
+		public function __construct( array $parts ) {}
+	}
+
+	class ModelMessage extends Message {
+		/**
+		 * @param MessagePart[] $parts
+		 */
+		public function __construct( array $parts ) {}
+	}
 }

@@ -43,10 +43,17 @@ class AiOverview extends Singleton {
 				'callback'            => [ $this, 'handle_request' ],
 				'permission_callback' => [ $this, 'check_permission' ],
 				'args'                => [
-					'query' => [
+					'query'   => [
 						'required'          => true,
 						'type'              => 'string',
 						'sanitize_callback' => 'sanitize_text_field',
+					],
+					'history' => [
+						'required' => false,
+						'type'     => 'array',
+						'default'  => [],
+						// Items are associative arrays (role/content); sanitized
+						// and windowed in FaqSearchService::prepare_history().
 					],
 				],
 			]
@@ -178,7 +185,8 @@ class AiOverview extends Singleton {
 	 * @return \WP_REST_Response|\WP_Error Response or error.
 	 */
 	public function handle_request( \WP_REST_Request $request ) {
-		$query = $request->get_param( 'query' );
+		$query   = $request->get_param( 'query' );
+		$history = (array) $request->get_param( 'history' );
 
 		// Check if AI is available
 		$prompt = wp_ai_client_prompt( $query );
@@ -191,7 +199,7 @@ class AiOverview extends Singleton {
 		}
 
 		$service = new FaqSearchService();
-		$result  = $service->generate_overview( $query );
+		$result  = $service->generate_overview( $query, $history );
 
 		if ( is_wp_error( $result ) ) {
 			return $result;

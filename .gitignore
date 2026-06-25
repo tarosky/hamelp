@@ -13,3 +13,5 @@ node_modules/
 wp-dependencies.json
 tmp/
 .claude/settings.local.json
+/tasks/
+/tmp/

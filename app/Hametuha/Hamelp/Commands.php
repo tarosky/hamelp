@@ -10,7 +10,7 @@ namespace Hametuha\Hamelp;
 use Hametuha\Hamelp\Services\FaqCatalogBuilder;
 
 /**
- * Manage Hamelp FAQ system.
+ * Manage Pubpla AI Help Center FAQ system.
  */
 class Commands extends \WP_CLI_Command {
 

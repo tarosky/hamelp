@@ -66,6 +66,16 @@ function hamelp_activate() {
 }
 register_activation_hook( __FILE__, 'hamelp_activate' );
 
+/**
+ * Plugin deactivation handler.
+ *
+ * Clears scheduled cron events so they do not linger after deactivation.
+ */
+function hamelp_deactivate() {
+	wp_clear_scheduled_hook( 'hamelp_purge_conversations' );
+}
+register_deactivation_hook( __FILE__, 'hamelp_deactivate' );
+
 
 /**
  * Register all file in wp-dependencies.json

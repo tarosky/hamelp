@@ -175,6 +175,50 @@ class ConversationStore {
 	}
 
 	/**
+	 * Delete anonymous conversations older than the retention period.
+	 *
+	 * Only anonymous conversations (post_author = 0) are purged. Conversations
+	 * owned by a logged-in user are kept, because their data is removed when the
+	 * user account itself is deleted. A value of 0 (or less) disables purging.
+	 *
+	 * @param int $days Retention period in days. 0 disables deletion.
+	 * @param int $limit Maximum conversations to delete per run (batch cap).
+	 * @return int Number of conversations deleted.
+	 */
+	public function purge_expired( int $days, int $limit = 200 ): int {
+		if ( $days <= 0 ) {
+			return 0;
+		}
+
+		$before = gmdate( 'Y-m-d H:i:s', time() - $days * DAY_IN_SECONDS );
+
+		$ids = get_posts(
+			[
+				'post_type'      => self::POST_TYPE,
+				'post_status'    => 'any',
+				'author__in'     => [ 0 ], // Anonymous only; logged-in conversations are excluded.
+				'posts_per_page' => $limit,
+				'fields'         => 'ids',
+				'no_found_rows'  => true,
+				'date_query'     => [
+					[
+						'column' => 'post_modified_gmt',
+						'before' => $before,
+					],
+				],
+			]
+		);
+
+		$count = 0;
+		foreach ( $ids as $id ) {
+			if ( wp_delete_post( (int) $id, true ) ) {
+				++$count;
+			}
+		}
+		return $count;
+	}
+
+	/**
 	 * Find a conversation post by its UUID.
 	 *
 	 * @param string $uuid Conversation UUID.

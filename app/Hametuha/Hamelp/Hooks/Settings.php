@@ -281,6 +281,30 @@ class Settings extends Singleton {
 				'description' => __( 'Store AI Overview conversations so you can review what visitors asked. Questions are saved to your database.', 'hamelp' ),
 			]
 		);
+
+		register_setting(
+			self::OPTION_GROUP,
+			'hamelp_retention_days',
+			[
+				'type'              => 'integer',
+				'sanitize_callback' => 'absint',
+				'default'           => 0,
+			]
+		);
+
+		add_settings_field(
+			'hamelp_retention_days',
+			__( 'Auto-delete After (days)', 'hamelp' ),
+			[ $this, 'render_number' ],
+			self::PAGE_SLUG,
+			'hamelp_history_section',
+			[
+				'option_name' => 'hamelp_retention_days',
+				'description' => __( 'Automatically delete anonymous conversations older than this many days. 0 means never delete. Conversations from logged-in users are never auto-deleted (delete the user account to remove their data).', 'hamelp' ),
+				'default'     => 0,
+				'min'         => 0,
+			]
+		);
 	}
 
 	/**

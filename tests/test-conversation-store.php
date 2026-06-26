@@ -134,4 +134,66 @@ class ConversationStoreTest extends WP_UnitTestCase {
 		$this->assertStringNotContainsString( '<script>', $post->post_title );
 		$this->assertStringContainsString( 'Hello', $post->post_title );
 	}
+
+	/**
+	 * Backdate a conversation's modified time so it looks expired.
+	 *
+	 * @param int $post_id Conversation post ID.
+	 * @param int $days    How many days in the past to set.
+	 */
+	protected function backdate( int $post_id, int $days ) {
+		global $wpdb;
+		$old = gmdate( 'Y-m-d H:i:s', time() - $days * DAY_IN_SECONDS );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery
+		$wpdb->update(
+			$wpdb->posts,
+			[
+				'post_modified'     => $old,
+				'post_modified_gmt' => $old,
+			],
+			[ 'ID' => $post_id ]
+		);
+		clean_post_cache( $post_id );
+	}
+
+	/**
+	 * A retention period of 0 disables deletion.
+	 */
+	public function test_purge_disabled_when_zero() {
+		$saved = $this->store->save_turn( null, 'Q', 'A', [] );
+		$this->backdate( $saved['post_id'], 100 );
+
+		$this->assertSame( 0, $this->store->purge_expired( 0 ) );
+		$this->assertNotNull( get_post( $saved['post_id'] ) );
+	}
+
+	/**
+	 * Expired anonymous conversations are deleted; recent ones are kept.
+	 */
+	public function test_purge_deletes_expired_anonymous() {
+		$old    = $this->store->save_turn( null, 'Old', 'A', [] );
+		$recent = $this->store->save_turn( null, 'Recent', 'A', [] );
+		$this->backdate( $old['post_id'], 40 );
+
+		$deleted = $this->store->purge_expired( 30 );
+
+		$this->assertSame( 1, $deleted );
+		$this->assertNull( get_post( $old['post_id'] ) );
+		$this->assertNotNull( get_post( $recent['post_id'] ) );
+	}
+
+	/**
+	 * Conversations owned by a logged-in user are never auto-deleted.
+	 */
+	public function test_purge_keeps_logged_in_user_conversations() {
+		$user = self::factory()->user->create();
+		wp_set_current_user( $user );
+		$mine = $this->store->save_turn( null, 'Mine', 'A', [] );
+		wp_set_current_user( 0 );
+
+		$this->backdate( $mine['post_id'], 40 );
+
+		$this->assertSame( 0, $this->store->purge_expired( 30 ) );
+		$this->assertNotNull( get_post( $mine['post_id'] ) );
+	}
 }

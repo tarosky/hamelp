@@ -125,6 +125,26 @@ function hamelp_version_error() {
 }
 
 /**
+ * Get the AI Overview operating mode.
+ *
+ * - `conversation`: multi-turn conversation (default).
+ * - `single`: single-shot Q&A; prior turns are ignored (cheaper per request).
+ * - `off`: feature disabled (front-end renders nothing, REST is rejected).
+ *
+ * @return string One of `conversation`, `single`, `off`.
+ */
+function hamelp_ai_overview_mode() {
+	$mode = get_option( 'hamelp_ai_overview_mode', 'conversation' );
+	/**
+	 * Filter the AI Overview operating mode.
+	 *
+	 * @param string $mode One of `conversation`, `single`, `off`.
+	 */
+	$mode = apply_filters( 'hamelp_ai_overview_mode', $mode );
+	return in_array( $mode, [ 'conversation', 'single', 'off' ], true ) ? $mode : 'conversation';
+}
+
+/**
  * Get asset url
  *
  * @return string
@@ -266,6 +286,11 @@ function hamelp_render_search_box( $args = [] ) {
  * @return string HTML output.
  */
 function hamelp_render_ai_overview( $args = [] ) {
+	// When the feature is disabled (e.g. to stop a request flood), render nothing.
+	if ( 'off' === hamelp_ai_overview_mode() ) {
+		return '';
+	}
+
 	$args = wp_parse_args(
 		$args,
 		[

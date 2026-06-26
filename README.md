@@ -114,6 +114,7 @@ You can contribute to our github repo. Any [issues](https://github.com/tarosky/h
 - Add `hamelp_history_window` filter to limit how many prior messages are sent to the LLM (default 10).
 - Optionally **save conversations** for question mining (off by default). When enabled on the settings page, conversations are stored as a private post type viewable in the admin, so you can see what visitors actually ask. Toggle via the **Save Conversations** setting or the `hamelp_save_conversations` filter.
 - Add an **Auto-delete After (days)** retention setting. A daily cron removes anonymous conversations older than the configured number of days (0 = never delete). Conversations from logged-in users are never auto-deleted.
+- Add an AI Overview **Mode** setting: *Conversation* (multi-turn, default), *Single answer* (no follow-up, lower cost), or *Disabled*. Use Single/Disabled to cut cost or stop the feature during a request flood. Also available via the `hamelp_ai_overview_mode` filter.
 
 ### 2.2.3
 

@@ -53,6 +53,9 @@ document.querySelectorAll( '.hamelp-ai-overview' ).forEach( ( container ) => {
 	const button = container.querySelector( 'button' );
 	const showSources = container.dataset.showSources === 'true';
 	const mode = container.dataset.mode || 'conversation';
+	const continueLabel = container.querySelector(
+		'.hamelp-ai-overview__continue'
+	);
 	const continueToggle = container.querySelector(
 		'.hamelp-ai-overview__continue-toggle'
 	);
@@ -62,6 +65,14 @@ document.querySelectorAll( '.hamelp-ai-overview' ).forEach( ( container ) => {
 	// Server-issued conversation id (only when saving is enabled). Sent back on
 	// follow-up turns so the whole conversation is appended to one record.
 	let conversationId = '';
+
+	// The "continue" toggle is only meaningful once there is something to
+	// continue, so it stays hidden until the first exchange exists.
+	const updateContinueVisibility = () => {
+		if ( continueLabel ) {
+			continueLabel.hidden = history.length === 0;
+		}
+	};
 
 	form.addEventListener( 'submit', async ( e ) => {
 		e.preventDefault();
@@ -83,6 +94,7 @@ document.querySelectorAll( '.hamelp-ai-overview' ).forEach( ( container ) => {
 			thread.innerHTML = '';
 			history.length = 0;
 			conversationId = '';
+			updateContinueVisibility();
 		}
 
 		// Snapshot history to send (prior turns only, not the new question).
@@ -139,6 +151,7 @@ document.querySelectorAll( '.hamelp-ai-overview' ).forEach( ( container ) => {
 			// Record the completed exchange for the next turn's context.
 			history.push( { role: 'user', content: query } );
 			history.push( { role: 'assistant', content: data.answer } );
+			updateContinueVisibility();
 		} catch ( err ) {
 			answerEl.innerHTML = `<div class="hamelp-ai-overview__error">${
 				err.message || __( 'An error occurred.', 'hamelp' )

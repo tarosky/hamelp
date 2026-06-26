@@ -327,8 +327,9 @@ function hamelp_render_ai_overview( $args = [] ) {
 	// Single mode answers each question independently, so no toggle is shown.
 	$continue_toggle = '';
 	if ( 'conversation' === $mode ) {
+		// Hidden until there is at least one exchange; view.js reveals it.
 		$continue_toggle = sprintf(
-			'<label class="hamelp-ai-overview__continue"><input type="checkbox" class="hamelp-ai-overview__continue-toggle" checked /> %s</label>',
+			'<label class="hamelp-ai-overview__continue" hidden><input type="checkbox" class="hamelp-ai-overview__continue-toggle" checked /> %s</label>',
 			esc_html__( 'Continue the previous conversation', 'hamelp' )
 		);
 	}

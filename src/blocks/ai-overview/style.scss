@@ -46,7 +46,9 @@
 }
 
 // "Continue the previous conversation" toggle (conversation mode only).
-:where(.hamelp-ai-overview__continue) {
+// Scoped to :not([hidden]) so the `hidden` attribute (set until there is at
+// least one exchange) is honored instead of overridden by display:flex.
+:where(.hamelp-ai-overview__continue:not([hidden])) {
 	display: flex;
 	align-items: center;
 	gap: 0.4rem;

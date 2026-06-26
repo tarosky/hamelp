@@ -113,6 +113,7 @@ You can contribute to our github repo. Any [issues](https://github.com/tarosky/h
 - AI Overview now supports **multi-turn conversations**. Follow-up questions keep the previous exchanges as context, and answers stack as a Q&A thread. Conversation history is held in the browser and sent with each request, so nothing is stored on the server.
 - Add `hamelp_history_window` filter to limit how many prior messages are sent to the LLM (default 10).
 - Optionally **save conversations** for question mining (off by default). When enabled on the settings page, conversations are stored as a private post type viewable in the admin, so you can see what visitors actually ask. Toggle via the **Save Conversations** setting or the `hamelp_save_conversations` filter.
+- Add an **Auto-delete After (days)** retention setting. A daily cron removes anonymous conversations older than the configured number of days (0 = never delete). Conversations from logged-in users are never auto-deleted.
 
 ### 2.2.3
 

@@ -20,6 +20,13 @@ use Hametuha\Hamelp\Services\ConversationStore;
 class ConversationHistory extends Singleton {
 
 	/**
+	 * Cron hook for purging expired conversations.
+	 *
+	 * @var string
+	 */
+	const PURGE_HOOK = 'hamelp_purge_conversations';
+
+	/**
 	 * Initialize hooks.
 	 */
 	protected function init() {
@@ -27,6 +34,27 @@ class ConversationHistory extends Singleton {
 		add_filter( 'manage_' . ConversationStore::POST_TYPE . '_posts_columns', [ $this, 'columns' ] );
 		add_action( 'manage_' . ConversationStore::POST_TYPE . '_posts_custom_column', [ $this, 'render_column' ], 10, 2 );
 		add_action( 'add_meta_boxes', [ $this, 'add_meta_boxes' ] );
+		add_action( self::PURGE_HOOK, [ $this, 'purge_expired' ] );
+		add_action( 'init', [ $this, 'schedule_purge' ] );
+	}
+
+	/**
+	 * Ensure the daily purge event is scheduled.
+	 */
+	public function schedule_purge() {
+		if ( ! wp_next_scheduled( self::PURGE_HOOK ) ) {
+			wp_schedule_event( time() + DAY_IN_SECONDS, 'daily', self::PURGE_HOOK );
+		}
+	}
+
+	/**
+	 * Purge expired anonymous conversations based on the retention setting.
+	 *
+	 * Runs daily via wp-cron. Does nothing when the retention period is 0.
+	 */
+	public function purge_expired() {
+		$days = (int) get_option( 'hamelp_retention_days', 0 );
+		( new ConversationStore() )->purge_expired( $days );
 	}
 
 	/**

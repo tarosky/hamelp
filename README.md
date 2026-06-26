@@ -115,6 +115,7 @@ You can contribute to our github repo. Any [issues](https://github.com/tarosky/h
 - Optionally **save conversations** for question mining (off by default). When enabled on the settings page, conversations are stored as a private post type viewable in the admin, so you can see what visitors actually ask. Toggle via the **Save Conversations** setting or the `hamelp_save_conversations` filter.
 - Add an **Auto-delete After (days)** retention setting. A daily cron removes anonymous conversations older than the configured number of days (0 = never delete). Conversations from logged-in users are never auto-deleted.
 - Add an AI Overview **Mode** setting: *Conversation* (multi-turn, default), *Single answer* (no follow-up, lower cost), or *Disabled*. Use Single/Disabled to cut cost or stop the feature during a request flood. Also available via the `hamelp_ai_overview_mode` filter.
+- The front-end now reflects the mode: *Single answer* replaces the previous answer on each question, and *Conversation* shows a "Continue the previous conversation" toggle so visitors can either keep asking follow-ups or start a fresh conversation (which clears the thread).
 
 ### 2.2.3
 

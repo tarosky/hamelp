@@ -1,10 +1,15 @@
 /**
  * AI Overview Block Frontend Script
  *
- * Stateless multi-turn conversation: the prior turns are kept in memory on the
- * client and sent with every request as `history`. Nothing is persisted here
- * (history saving is a separate feature). The thread stacks question/answer
- * pairs; the form below stays available for follow-up questions.
+ * Behavior depends on the mode set on the container (`data-mode`):
+ * - `conversation`: prior turns are kept in memory and sent as `history` so the
+ *   answer has context. A "Continue the previous conversation" checkbox lets the
+ *   visitor either keep asking follow-ups or start fresh (which clears the
+ *   thread and starts a new conversation record).
+ * - `single`: each question is independent. The thread is cleared on every
+ *   submit so only the latest question and answer are shown (no context).
+ *
+ * Nothing is persisted client-side here (history saving is a separate feature).
  *
  * @package
  */
@@ -36,7 +41,9 @@ function renderSources( sources ) {
 
 document.querySelectorAll( '.hamelp-ai-overview' ).forEach( ( container ) => {
 	const form = container.querySelector( 'form' );
-	const input = container.querySelector( 'input' );
+	// Select the text input specifically: the form may also contain the
+	// "continue" checkbox, so a bare `input` selector would match the wrong one.
+	const input = container.querySelector( '.hamelp-ai-overview__input' );
 	const thread = container.querySelector( '.hamelp-ai-overview__thread' );
 
 	if ( ! form || ! input || ! thread ) {
@@ -45,6 +52,10 @@ document.querySelectorAll( '.hamelp-ai-overview' ).forEach( ( container ) => {
 
 	const button = container.querySelector( 'button' );
 	const showSources = container.dataset.showSources === 'true';
+	const mode = container.dataset.mode || 'conversation';
+	const continueToggle = container.querySelector(
+		'.hamelp-ai-overview__continue-toggle'
+	);
 
 	// In-memory conversation history: [{ role: 'user'|'assistant', content }].
 	const history = [];
@@ -57,6 +68,21 @@ document.querySelectorAll( '.hamelp-ai-overview' ).forEach( ( container ) => {
 		const query = input.value.trim();
 		if ( ! query ) {
 			return;
+		}
+
+		// Decide whether this submit continues the current conversation or starts
+		// a new one. Single mode is always independent; conversation mode follows
+		// the toggle (and the first question always starts fresh).
+		const isContinue =
+			mode === 'conversation' &&
+			!! continueToggle?.checked &&
+			history.length > 0;
+
+		if ( ! isContinue ) {
+			// Start fresh: clear the visible thread and reset the conversation.
+			thread.innerHTML = '';
+			history.length = 0;
+			conversationId = '';
 		}
 
 		// Snapshot history to send (prior turns only, not the new question).

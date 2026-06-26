@@ -36,7 +36,21 @@
 
 :where(.hamelp-ai-overview__form) {
 	display: flex;
+	flex-direction: column;
 	gap: 0.5rem;
+}
+
+:where(.hamelp-ai-overview__input-row) {
+	display: flex;
+	gap: 0.5rem;
+}
+
+// "Continue the previous conversation" toggle (conversation mode only).
+:where(.hamelp-ai-overview__continue) {
+	display: flex;
+	align-items: center;
+	gap: 0.4rem;
+	font-size: 0.9em;
 }
 
 :where(.hamelp-ai-overview__input) {

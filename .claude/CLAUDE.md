@@ -127,6 +127,7 @@ npm test
 | `test.yml` | PR / push to master | PHP/JS/CSS lint, PHPUnit |
 | `release-drafter.yml` | push to master | リリースドラフト更新 |
 | `wordpress.yml` | release published | WordPress.orgへデプロイ |
+| `demo.yml` | push to master | デモ環境（さくらレンタルサーバー）へ rsync デプロイ。バージョンはコミットハッシュ |
 | `wp-outdated.yml` | 月次 (5日) | WPバージョンチェック、Issue作成 |
 
 ### リリースフロー
@@ -138,6 +139,15 @@ npm test
 
 - `WP_ORG_USERNAME`: WordPress.org SVNユーザー名
 - `WP_ORG_PASSWORD`: WordPress.org SVNパスワード
+- `KUNOICHI_DEMO_SAKURA_SSH`: デモ環境（さくら）デプロイ用SSH秘密鍵
+
+### デモ環境
+
+- master へ push されるたびに `demo.yml` がビルドして rsync デプロイ
+- 接続先: `kunoichi-demo@kunoichi-demo.sakura.ne.jp:/home/kunoichi-demo/www/demo.kunoichiwp.com/pubplafaq/wp-content/plugins/hamelp`
+- URL: https://demo.kunoichiwp.com/pubplafaq/ （environment: staging）
+- バージョン表記はコミットハッシュ（最新版の「予告」として機能）
+- 初回デプロイ後、プラグインの有効化は手動で1回必要
 
 ## ディレクトリ構造
 

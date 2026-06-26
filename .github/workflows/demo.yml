@@ -1,0 +1,56 @@
+name: Deploy to Demo
+
+on:
+  push:
+    branches:
+      - master
+
+# Only one demo deploy at a time; newer pushes supersede in-flight ones.
+concurrency:
+  group: deploy-demo
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: Build and deploy to demo
+    runs-on: ubuntu-latest
+    environment:
+      name: staging
+      url: https://demo.kunoichiwp.com/pubplafaq/
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP with composer v2
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 7.4
+          tools: composer
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      # Same build as the WordPress.org release, but the version becomes the
+      # short commit hash so the demo clearly shows a bleeding-edge build.
+      - name: Build package (version = commit hash)
+        run: bash bin/build.sh "${GITHUB_SHA:0:7}"
+
+      - name: Setup SSH key
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "${{ secrets.KUNOICHI_DEMO_SAKURA_SSH }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H kunoichi-demo.sakura.ne.jp >> ~/.ssh/known_hosts 2>/dev/null
+
+      # Mirror the built plugin to the demo server. .distignore matches the
+      # WordPress.org distribution; --delete keeps the remote folder in sync.
+      - name: Deploy via rsync
+        run: |
+          rsync -rltvz --delete --chmod=D755,F644 \
+            --exclude-from=.distignore \
+            --exclude='tmp' \
+            -e "ssh -i ~/.ssh/deploy_key" \
+            ./ kunoichi-demo@kunoichi-demo.sakura.ne.jp:/home/kunoichi-demo/www/demo.kunoichiwp.com/pubplafaq/wp-content/plugins/hamelp/

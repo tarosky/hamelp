@@ -203,9 +203,10 @@ class AiOverview extends Singleton {
 	public function handle_request( \WP_REST_Request $request ) {
 		$query   = $request->get_param( 'query' );
 		$history = (array) $request->get_param( 'history' );
+		$single  = ( 'single' === hamelp_ai_overview_mode() );
 
 		// In single-shot mode each question is independent: ignore prior turns.
-		if ( 'single' === hamelp_ai_overview_mode() ) {
+		if ( $single ) {
 			$history = [];
 		}
 
@@ -233,14 +234,16 @@ class AiOverview extends Singleton {
 		// Done only after a successful answer so empty attempts are never stored.
 		$store = new ConversationStore();
 		if ( $store->is_enabled() ) {
-			$conversation_id = (string) $request->get_param( 'conversation_id' );
+			// In single-shot mode each question is an independent record, so the
+			// conversation id is not chained: every answer starts a new record.
+			$conversation_id = $single ? '' : (string) $request->get_param( 'conversation_id' );
 			$saved           = $store->save_turn(
 				'' !== $conversation_id ? $conversation_id : null,
 				$query,
 				(string) $result['answer'],
 				$result['cited_ids'] ?? []
 			);
-			if ( ! empty( $saved['uuid'] ) ) {
+			if ( ! $single && ! empty( $saved['uuid'] ) ) {
 				$result['conversation_id'] = $saved['uuid'];
 			}
 		}

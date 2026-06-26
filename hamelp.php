@@ -312,23 +312,40 @@ function hamelp_render_ai_overview( $args = [] ) {
 		}
 	}
 
+	$mode = hamelp_ai_overview_mode();
+
 	// Build wrapper attributes if not provided (non-block context).
 	if ( empty( $args['wrapper_attrs'] ) ) {
 		$args['wrapper_attrs'] = sprintf(
-			'class="hamelp-ai-overview" data-show-sources="%s"',
-			$args['show_sources'] ? 'true' : 'false'
+			'class="hamelp-ai-overview" data-show-sources="%s" data-mode="%s"',
+			$args['show_sources'] ? 'true' : 'false',
+			esc_attr( $mode )
+		);
+	}
+
+	// In conversation mode, offer a "carry over the previous conversation" toggle.
+	// Single mode answers each question independently, so no toggle is shown.
+	$continue_toggle = '';
+	if ( 'conversation' === $mode ) {
+		$continue_toggle = sprintf(
+			'<label class="hamelp-ai-overview__continue"><input type="checkbox" class="hamelp-ai-overview__continue-toggle" checked /> %s</label>',
+			esc_html__( 'Continue the previous conversation', 'hamelp' )
 		);
 	}
 
 	return sprintf(
-		'<div %s>
+		'<div %1$s>
 	<div class="hamelp-ai-overview__thread" aria-live="polite"></div>
 	<form class="hamelp-ai-overview__form">
-		<input type="text" class="hamelp-ai-overview__input" placeholder="%s" required />
-		<button type="submit" class="hamelp-ai-overview__button">%s</button>
+		%2$s
+		<div class="hamelp-ai-overview__input-row">
+			<input type="text" class="hamelp-ai-overview__input" placeholder="%3$s" required />
+			<button type="submit" class="hamelp-ai-overview__button">%4$s</button>
+		</div>
 	</form>
 </div>',
 		$args['wrapper_attrs'],
+		$continue_toggle, // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- built from esc_html__ above.
 		esc_attr( $args['placeholder'] ),
 		esc_html( $args['button_text'] )
 	);

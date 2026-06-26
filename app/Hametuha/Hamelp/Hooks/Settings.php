@@ -172,6 +172,17 @@ class Settings extends Singleton {
 	 * Register settings and fields.
 	 */
 	public function register_settings() {
+		// AI Overview mode (feature switch).
+		register_setting(
+			self::OPTION_GROUP,
+			'hamelp_ai_overview_mode',
+			[
+				'type'              => 'string',
+				'sanitize_callback' => [ $this, 'sanitize_mode' ],
+				'default'           => 'conversation',
+			]
+		);
+
 		// AI Overview fields.
 		$fields = $this->get_ai_fields();
 		foreach ( $fields as $suffix => $field ) {
@@ -192,6 +203,24 @@ class Settings extends Singleton {
 			__( 'AI Overview', 'hamelp' ),
 			[ $this, 'render_section' ],
 			self::PAGE_SLUG
+		);
+
+		add_settings_field(
+			'hamelp_ai_overview_mode',
+			__( 'Mode', 'hamelp' ),
+			[ $this, 'render_select' ],
+			self::PAGE_SLUG,
+			'hamelp_ai_section',
+			[
+				'option_name' => 'hamelp_ai_overview_mode',
+				'default'     => 'conversation',
+				'choices'     => [
+					'conversation' => __( 'Conversation (multi-turn): visitors can ask follow-up questions.', 'hamelp' ),
+					'single'       => __( 'Single answer: each question is answered independently (no follow-up, lower cost).', 'hamelp' ),
+					'off'          => __( 'Disabled: the AI Overview is turned off everywhere.', 'hamelp' ),
+				],
+				'description' => __( 'Controls how the AI Overview behaves. Switch to "Single answer" or "Disabled" to cut LLM cost or stop the feature during a request flood or abuse spike.', 'hamelp' ),
+			]
 		);
 
 		foreach ( $fields as $suffix => $field ) {
@@ -445,6 +474,40 @@ class Settings extends Singleton {
 			'<p class="description">%s</p>',
 			esc_html( $args['description'] )
 		);
+	}
+
+	/**
+	 * Render a select (dropdown) field.
+	 *
+	 * @param array $args Field arguments (option_name, choices, default, description).
+	 */
+	public function render_select( array $args ) {
+		$value   = get_option( $args['option_name'], $args['default'] ?? '' );
+		$choices = isset( $args['choices'] ) && is_array( $args['choices'] ) ? $args['choices'] : [];
+		printf( '<select name="%1$s" id="%1$s">', esc_attr( $args['option_name'] ) );
+		foreach ( $choices as $key => $label ) {
+			printf(
+				'<option value="%s" %s>%s</option>',
+				esc_attr( $key ),
+				selected( $value, $key, false ),
+				esc_html( $label )
+			);
+		}
+		echo '</select>';
+		if ( ! empty( $args['description'] ) ) {
+			printf( '<p class="description">%s</p>', esc_html( $args['description'] ) );
+		}
+	}
+
+	/**
+	 * Sanitize the AI Overview mode option.
+	 *
+	 * @param string $value Submitted value.
+	 * @return string A valid mode, defaulting to `conversation`.
+	 */
+	public function sanitize_mode( $value ) {
+		$allowed = [ 'conversation', 'single', 'off' ];
+		return in_array( $value, $allowed, true ) ? $value : 'conversation';
 	}
 
 	/**

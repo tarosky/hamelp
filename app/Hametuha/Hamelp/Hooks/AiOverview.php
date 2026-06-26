@@ -74,6 +74,15 @@ class AiOverview extends Singleton {
 	 * @return true|\WP_Error
 	 */
 	public function check_permission( \WP_REST_Request $request ) {
+		// 0. Feature disabled (e.g. to stop a request flood).
+		if ( 'off' === hamelp_ai_overview_mode() ) {
+			return new \WP_Error(
+				'ai_overview_disabled',
+				__( 'AI Overview is currently disabled.', 'hamelp' ),
+				[ 'status' => 403 ]
+			);
+		}
+
 		// 1. Login required check.
 		$require_login = (bool) apply_filters( 'hamelp_ai_overview_require_login', get_option( 'hamelp_rate_require_login', '' ) );
 		if ( $require_login && ! is_user_logged_in() ) {
@@ -194,6 +203,11 @@ class AiOverview extends Singleton {
 	public function handle_request( \WP_REST_Request $request ) {
 		$query   = $request->get_param( 'query' );
 		$history = (array) $request->get_param( 'history' );
+
+		// In single-shot mode each question is independent: ignore prior turns.
+		if ( 'single' === hamelp_ai_overview_mode() ) {
+			$history = [];
+		}
 
 		// Check if AI is available
 		$prompt = wp_ai_client_prompt( $query );

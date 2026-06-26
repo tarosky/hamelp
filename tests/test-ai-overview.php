@@ -129,4 +129,31 @@ class AiOverviewTest extends WP_UnitTestCase {
 	public function test_empty_history() {
 		$this->assertSame( [], $this->service->prepare_history( [] ) );
 	}
+
+	/**
+	 * The AI Overview mode defaults to conversation and honors option/filter.
+	 */
+	public function test_ai_overview_mode() {
+		$this->assertSame( 'conversation', hamelp_ai_overview_mode() );
+
+		update_option( 'hamelp_ai_overview_mode', 'single' );
+		$this->assertSame( 'single', hamelp_ai_overview_mode() );
+
+		update_option( 'hamelp_ai_overview_mode', 'off' );
+		$this->assertSame( 'off', hamelp_ai_overview_mode() );
+
+		// Invalid stored value falls back to the default.
+		update_option( 'hamelp_ai_overview_mode', 'bogus' );
+		$this->assertSame( 'conversation', hamelp_ai_overview_mode() );
+
+		// Filter override.
+		$filter = static function () {
+			return 'off';
+		};
+		add_filter( 'hamelp_ai_overview_mode', $filter );
+		$this->assertSame( 'off', hamelp_ai_overview_mode() );
+		remove_filter( 'hamelp_ai_overview_mode', $filter );
+
+		delete_option( 'hamelp_ai_overview_mode' );
+	}
 }

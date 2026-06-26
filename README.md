@@ -1,4 +1,4 @@
-# Hamelp
+# Pubpla AI Help Center
 
 Contributors: tarosky, hametuha, Takahashi_Fumiki    
 Tags: faq,help  
@@ -30,7 +30,7 @@ It uses the [wp-ai-client](https://github.com/WordPress/wp-ai-client) bundled wi
 
 **Requirements:** AI Overview requires **WordPress 7.0 or later**. On older WordPress versions, the AI Overview block and template function will still appear in the editor and on the front-end, but the search form will not work (the REST endpoint that powers it is disabled). Other features of this plugin (FAQ custom post type, incremental search, shortcode) continue to work on WordPress 6.6+. Upgrade WordPress to 7.0 to enable AI Overview.
 
-You can configure AI behavior and rate limiting from **Settings > Hamelp** in the admin panel. The settings page also includes a **Rebuild Catalog Now** button to manually refresh the FAQ catalog used as LLM context.
+You can configure AI behavior and rate limiting from **Settings > Help Center** in the admin panel. The settings page also includes a **Rebuild Catalog Now** button to manually refresh the FAQ catalog used as LLM context.
 
 #### Using the Block
 
@@ -110,6 +110,7 @@ You can contribute to our github repo. Any [issues](https://github.com/tarosky/h
 ### 2.3.0
 
 - Change ownership to Tarosky.
+- Rename the plugin to **Pubpla AI Help Center**. The plugin slug, text domain, REST routes, and PHP APIs stay `hamelp` for backward compatibility, so no configuration or code changes are required.
 - AI Overview now supports **multi-turn conversations**. Follow-up questions keep the previous exchanges as context, and answers stack as a Q&A thread. Conversation history is held in the browser and sent with each request, so nothing is stored on the server.
 - Add `hamelp_history_window` filter to limit how many prior messages are sent to the LLM (default 10).
 - Optionally **save conversations** for question mining (off by default). When enabled on the settings page, conversations are stored as a private post type viewable in the admin, so you can see what visitors actually ask. Toggle via the **Save Conversations** setting or the `hamelp_save_conversations` filter.

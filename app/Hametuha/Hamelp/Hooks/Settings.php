@@ -89,8 +89,8 @@ class Settings extends Singleton {
 	 */
 	public function add_menu_page() {
 		add_options_page(
-			__( 'Hamelp Settings', 'hamelp' ),
-			__( 'Hamelp', 'hamelp' ),
+			__( 'Pubpla AI Help Center', 'hamelp' ),
+			__( 'Help Center', 'hamelp' ),
 			'manage_options',
 			self::PAGE_SLUG,
 			[ $this, 'render_page' ]
@@ -345,7 +345,7 @@ class Settings extends Singleton {
 		$updated = $builder->get_last_updated();
 		?>
 		<div class="wrap">
-			<h1><?php esc_html_e( 'Hamelp Settings', 'hamelp' ); ?></h1>
+			<h1><?php esc_html_e( 'Pubpla AI Help Center', 'hamelp' ); ?></h1>
 
 			<?php if ( isset( $_GET['rebuilt'] ) ) : // phpcs:ignore WordPress.Security.NonceVerification.Recommended ?>
 				<div class="notice notice-success is-dismissible">

@@ -149,6 +149,32 @@ npm test
 - バージョン表記はコミットハッシュ（最新版の「予告」として機能）
 - 初回デプロイ後、プラグインの有効化は手動で1回必要
 
+#### デモサイトを REST API で操作する（`bin/demo.sh`）
+
+デモサイトの投稿作成・確認は **SSH ではなく REST API + Application Password** で行う。
+SSH をむやみに使わず、1ユーザーの権限の範囲だけを HTTPS Basic 認証で叩く（トークン単位で失効可能）。
+
+**初回セットアップ**
+
+1. デモサイトで専用 Editor ユーザー（例: `help-manager`）を作成
+2. そのユーザーで Application Password を発行（`ユーザー → プロフィール → アプリケーションパスワード`）
+3. `cp .envrc.example .envrc` して認証情報を記入（`.envrc` は gitignore 済み）
+4. `direnv allow`
+
+**使い方**
+
+```bash
+bin/demo.sh whoami                                          # 認証確認
+bin/demo.sh faq:list [--per_page 20]                        # FAQ一覧
+bin/demo.sh faq:create --title "Q" --content "A" [--status draft] [--category 12]
+bin/demo.sh get  /wp/v2/faq_category                        # 生GET（カテゴリID調査など）
+bin/demo.sh post /wp/v2/faq '{"title":"Q"}'                 # 生POST
+```
+
+- 認証情報は環境変数 `DEMO_URL` / `DEMO_USER` / `DEMO_APP_PASSWORD`（direnv が `.envrc` から export）。
+- Claude の実行シェルでは direnv フックが効かないことがあるため `direnv exec . bin/demo.sh ...` で叩く。
+- `.envrc` / `.envrc.example` は `.distignore` 済み（配布物・デモ rsync に含めない）。
+
 ## ディレクトリ構造
 
 ```

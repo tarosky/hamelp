@@ -4,6 +4,9 @@
 .editorconfig
 .git
 .gitignore
+.envrc
+.envrc.example
+.direnv
 .gitlab-ci.yml
 .husky
 .travis.yml

@@ -46,7 +46,7 @@
 		"husky": "^9.1.7",
 		"lint-staged": "^16.2.7",
 		"npm-watch": "^0.13.0",
-		"postcss": "^8.4.33",
+		"postcss": "^8.5.16",
 		"postcss-cli": "^11.0.0",
 		"sass": "^1.83.0"
 	},

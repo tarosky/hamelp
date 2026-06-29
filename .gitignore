@@ -16,3 +16,7 @@ tmp/
 .claude/settings.local.json
 /tasks/
 /tmp/
+
+# Local direnv config / demo REST credentials (do not commit)
+.envrc
+.direnv/

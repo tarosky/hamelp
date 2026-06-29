@@ -1,0 +1,9 @@
+# direnv config for bin/demo.sh — copy to .envrc (git-ignored), then run `direnv allow`.
+#
+# Generate DEMO_APP_PASSWORD on the demo site:
+#   wp-admin > Users > Profile > Application Passwords
+# Use a dedicated Editor user (least privilege), not an administrator.
+
+export DEMO_URL="https://demo.kunoichiwp.com/pubplafaq/"
+export DEMO_USER="demo-bot"
+export DEMO_APP_PASSWORD="xxxx xxxx xxxx xxxx xxxx xxxx"

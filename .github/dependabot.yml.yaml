@@ -1,0 +1,30 @@
+version: 2
+updates:
+  # ビルド/開発ツール（npm）
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      timezone: "Asia/Tokyo"
+    open-pull-requests-limit: 5
+    cooldown:
+      default-days: 7
+    allow:
+      - dependency-type: "direct"   # 推移的依存の単体PRを止める
+    groups:
+      dev-dependencies:
+        dependency-type: "development"
+        update-types: [ "minor", "patch" ]
+
+  # 本番依存（composer / vendorに同梱される側）
+  - package-ecosystem: "composer"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      timezone: "Asia/Tokyo"
+    open-pull-requests-limit: 5
+    cooldown:
+      default-days: 7
+    allow:
+      - dependency-type: "direct"

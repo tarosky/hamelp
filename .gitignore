@@ -10,6 +10,7 @@ node_modules/
 *.zip
 *.cache
 /vendor/
+.playwright-mcp/
 wp-dependencies.json
 tmp/
 .claude/settings.local.json

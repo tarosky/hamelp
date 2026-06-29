@@ -78,7 +78,7 @@ case "${cmd}" in
 		[[ -n "${title}" ]] || { echo "Error: --title is required" >&2; exit 1; }
 		body="{\"title\":\"$(json_escape "${title}")\",\"content\":\"$(json_escape "${content}")\",\"status\":\"$(json_escape "${status}")\""
 		if [[ -n "${category}" ]]; then
-			body="${body},\"faq_category\":[${category}]"
+			body="${body},\"faq_cat\":[${category}]"
 		fi
 		body="${body}}"
 		api POST /wp/v2/faq "${body}" | pp

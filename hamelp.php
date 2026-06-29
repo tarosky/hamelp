@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name:     Pubpla AI Help Center
+ * Plugin Name:     PubPla AI Help Center
  * Plugin URI:      https://wordpress.org/plugins/hamelp
  * Description:     AI powered FAQ and Help Document Management Plugin for WordPress.
  * Version:         2.3.0
@@ -121,7 +121,7 @@ add_action( 'init', 'hamelp_register_assets' );
  */
 function hamelp_version_error() {
 	// translators: %1$s required PHP version, %2$s current PHP version.
-	printf( '<div class="error"><p>%s</p></div>', sprintf( esc_html__( 'Pubpla AI Help Center requires PHP %1$s, but your PHP version is %2$s. Please consider upgrade.', 'hamelp' ), '7.4', esc_html( phpversion() ) ) );
+	printf( '<div class="error"><p>%s</p></div>', sprintf( esc_html__( 'PubPla AI Help Center requires PHP %1$s, but your PHP version is %2$s. Please consider upgrade.', 'hamelp' ), '7.4', esc_html( phpversion() ) ) );
 }
 
 /**

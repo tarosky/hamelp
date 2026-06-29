@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" role="img" aria-label="PubPla AI Help Center">
+  <defs>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#EECB00"></stop>
+      <stop offset="1" stop-color="#D6AA2E"></stop>
+    </linearGradient>
+  </defs>
+  <rect width="256" height="256" rx="58" fill="#FFFFFF"></rect>
+  <g transform="translate(34.5,34.5) scale(0.82)">
+    <circle cx="100" cy="100" r="82" fill="#F1FAFD"></circle>
+    <line x1="154" y1="154" x2="204" y2="204" stroke="url(#gold)" stroke-width="36" stroke-linecap="round"></line>
+    <line x1="164" y1="198" x2="198" y2="164" stroke="#A9750E" stroke-width="10" stroke-linecap="round"></line>
+    <circle cx="100" cy="100" r="82" fill="none" stroke="url(#gold)" stroke-width="23"></circle>
+    <circle cx="100" cy="100" r="52" fill="#FFFFFF"></circle>
+    <circle cx="102" cy="97" r="35" fill="#0087B3"></circle>
+    <circle cx="88" cy="85" r="10" fill="#FFFFFF" opacity="0.92"></circle>
+  </g>
+</svg>

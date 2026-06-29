@@ -149,6 +149,13 @@ npm test
 - バージョン表記はコミットハッシュ（最新版の「予告」として機能）
 - 初回デプロイ後、プラグインの有効化は手動で1回必要
 
+### デモサイトのコンテンツ
+
+デモサイトではFAQへの質問をAI Overviewで受け付け、回答をFAQとして投稿する。
+ただし、一般的なAIの回答とデモサイトならではのRAG風回答を差別化するために、
+デモサイトに投稿するコンテンツは「架空のサブスク健康商品」とする。
+この設定は `.claude/Universe.md` に書いてあるので、熟読しておくこと。
+
 #### デモサイトを REST API で操作する（`bin/demo.sh`）
 
 デモサイトの投稿作成・確認は **SSH ではなく REST API + Application Password** で行う。
@@ -167,7 +174,7 @@ SSH をむやみに使わず、1ユーザーの権限の範囲だけを HTTPS Ba
 bin/demo.sh whoami                                          # 認証確認
 bin/demo.sh faq:list [--per_page 20]                        # FAQ一覧
 bin/demo.sh faq:create --title "Q" --content "A" [--status draft] [--category 12]
-bin/demo.sh get  /wp/v2/faq_category                        # 生GET（カテゴリID調査など）
+bin/demo.sh get  /wp/v2/faq_cat                             # 生GET（カテゴリID調査など。タクソノミーは faq_cat）
 bin/demo.sh post /wp/v2/faq '{"title":"Q"}'                 # 生POST
 ```
 

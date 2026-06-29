@@ -42,13 +42,13 @@
 		"@kunoichi/grab-deps": "^3.0.0",
 		"@wordpress/env": "^10.38.0",
 		"@wordpress/scripts": "^30.0.0",
-		"autoprefixer": "^10.4.16",
+		"autoprefixer": "^10.5.0",
 		"husky": "^9.1.7",
 		"lint-staged": "^16.2.7",
 		"npm-watch": "^0.13.0",
-		"postcss": "^8.4.33",
+		"postcss": "^8.5.15",
 		"postcss-cli": "^11.0.0",
-		"sass": "^1.83.0"
+		"sass": "^1.101.0"
 	},
 	"watch": {
 		"build:js": {

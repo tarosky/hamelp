@@ -9,9 +9,9 @@ License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
 AI powered FAQ and Help Document Management Plugin for WordPress. 
 
-**Live demo:** https://demo.kunoichiwp.com/pubplafaq/ — Try the AI Overview on the front page. The demo is in Japanese, built around a fictional anti-aging subscription "Jovian", but you can still get a feel for how the AI answers real questions from your FAQ content (and admits when something isn't covered).
-
 ## Description
+
+**Live demo:** https://demo.kunoichiwp.com/pubplafaq/ — Try the AI Overview on the front page. The demo is in Japanese, built around a fictional anti-aging subscription "Jovian", but you can still get a feel for how the AI answers real questions from your FAQ content (and admits when something isn't covered).
 
 This plugin add new custom post type 'FAQ'. With some functionality, you can build help center for your user.
 What is help center? We collect examples at our [github wiki](https://github.com/tarosky/hamelp/wiki).

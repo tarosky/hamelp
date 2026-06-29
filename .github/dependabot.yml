@@ -11,11 +11,16 @@ updates:
     cooldown:
       default-days: 7
     allow:
-      - dependency-type: "direct"   # 推移的依存の単体PRを止める
+      - dependency-type: "direct"   # 推移的依存の単体PRを止める（脆弱性は下の security グループで拾う）
     groups:
-      dev-dependencies:
-        dependency-type: "development"
-        update-types: [ "minor", "patch" ]
+      # 通常のバージョン更新は major も含めて1本にまとめる（個別PRの乱立を防ぐ）
+      npm-dependencies:
+        patterns: [ "*" ]
+        update-types: [ "major", "minor", "patch" ]
+      # 脆弱性修正（推移的依存含む）もまとめて1本に
+      npm-security:
+        applies-to: security-updates
+        patterns: [ "*" ]
 
   # 本番依存（composer / vendorに同梱される側）
   - package-ecosystem: "composer"
@@ -28,3 +33,10 @@ updates:
       default-days: 7
     allow:
       - dependency-type: "direct"
+    groups:
+      composer-dependencies:
+        patterns: [ "*" ]
+        update-types: [ "major", "minor", "patch" ]
+      composer-security:
+        applies-to: security-updates
+        patterns: [ "*" ]

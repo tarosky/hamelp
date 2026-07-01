@@ -330,7 +330,7 @@ function hamelp_render_ai_overview( $args = [] ) {
 		// Hidden until there is at least one exchange; view.js reveals it.
 		$continue_toggle = sprintf(
 			'<label class="hamelp-ai-overview__continue" hidden><input type="checkbox" class="hamelp-ai-overview__continue-toggle" checked /> %s</label>',
-			esc_html__( 'Continue the previous conversation', 'hamelp' )
+			esc_html__( 'Continue this conversation', 'hamelp' )
 		);
 	}
 

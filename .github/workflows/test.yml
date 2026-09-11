@@ -11,6 +11,9 @@ on:
 jobs:
   test:
     strategy:
+      # Without this a single failing combination cancels the others, hiding how
+      # widespread a failure actually is.
+      fail-fast: false
       matrix:
         php: [ '7.4', '8.3' ]
         wp: [ 'latest', '6.6' ]
@@ -18,6 +21,10 @@ jobs:
     with:
       php_version: ${{ matrix.php }}
       wp_version: ${{ matrix.wp }}
+      # Blocks are registered from the gitignored assets/blocks, so without a
+      # build no block is registered and anything touching the registry or
+      # do_blocks() cannot be tested. Same command bin/build.sh uses at release.
+      package: 'package'
 
   phpcs:
     name: PHP Syntax Check
@@ -86,6 +93,11 @@ jobs:
 
       - name: JS Unit Test
         run: npm run test:js
+
+      # bin/build.sh runs the same command at release time, so a build break is
+      # caught here in one clear place instead of at deploy.
+      - name: Build Assets
+        run: npm run package
 
   status:
     name: Status Check

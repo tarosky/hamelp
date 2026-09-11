@@ -3,7 +3,7 @@
  * Plugin Name:     PubPla AI Help Center
  * Plugin URI:      https://wordpress.org/plugins/hamelp
  * Description:     AI powered FAQ and Help Document Management Plugin for WordPress.
- * Version:         2.5.0
+ * Version:         2.6.0
  * Author:          Tarosky
  * Author URI:      https://tarosky.co.jp
  * Domain Path:     /languages

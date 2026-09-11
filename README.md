@@ -135,6 +135,13 @@ You can contribute to our github repo. Any [issues](https://github.com/tarosky/h
 
 For full release notes of each version, see [GitHub Releases](https://github.com/tarosky/hamelp/releases).
 
+### 2.6.0
+
+- Add a **Copy answer** button under every AI Overview answer. It copies the answer exactly as displayed — citation labels and the source list included — so an answer can be pasted into a ticket or a review sheet without reformatting. On plain `http` sites, where the browser withholds the clipboard API, it falls back to the legacy copy path instead of failing silently.
+- Block text defaults are now translatable: the question placeholder, the submit button label and the helper text below the input. `block.json` attribute defaults are never translated by WordPress — only the keys listed in the core block i18n schema are — so those defaults were served verbatim in every locale. A Japanese site saw the English `Enter your question...`, and an English site saw Japanese helper text. The defaults now resolve through the translation files when the block is rendered.
+- **Note:** the helper text below the input became a new English source string in this release, so it stays in English until its translation lands on translate.wordpress.org. Type the text on the block itself if you need it in your language right away.
+- **Note:** if you had deliberately typed a value that matched the old default exactly, WordPress never stored it, so that field now shows the translated default instead. Any text that differs from the old default is untouched.
+
 ### 2.5.0
 
 - The AI Overview catalog is now built from **multiple queries** instead of one, merged and deduplicated by post ID. A single query could not express "published OR (private AND opted in)", because `post_status` is always ANDed with the taxonomy and meta conditions.

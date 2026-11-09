@@ -75,8 +75,22 @@ class FaqSearchService {
 		}
 		$messages[] = new UserMessage( [ new MessagePart( $query ) ] );
 
+		/**
+		 * Filter the HTTP timeout (seconds) for FAQ overview generation.
+		 *
+		 * The whole FAQ catalog is sent as context, so a large site can exceed
+		 * the AI client's 30-second default. Scoped to Hamelp's own request only.
+		 *
+		 * @param float $timeout Timeout in seconds. Default 60.
+		 */
+		$timeout = static function () {
+			return (float) apply_filters( 'hamelp_ai_request_timeout', 60 );
+		};
+		// The AI client reads the default timeout in the builder's constructor.
+		add_filter( 'wp_ai_client_default_request_timeout', $timeout );
 		$prompt = wp_ai_client_prompt( $messages )
 			->using_system_instruction( $system_prompt );
+		remove_filter( 'wp_ai_client_default_request_timeout', $timeout );
 
 		/**
 		 * Filter the preferred AI model for FAQ overview generation.

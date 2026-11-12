@@ -2,7 +2,7 @@
 
 Contributors: tarosky, hametuha, Takahashi_Fumiki, bissy    
 Tags: faq,help  
-Tested up to: 7.0  
+Tested up to: 7.1  
 Stable Tag: 2.4.3  
 License: GPL 3.0 or later  
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -134,6 +134,12 @@ You can contribute to our github repo. Any [issues](https://github.com/tarosky/h
 ## Changelog
 
 For full release notes of each version, see [GitHub Releases](https://github.com/tarosky/hamelp/releases).
+
+### 2.6.1
+
+- Fix AI Overview failing with `cURL error 28: Operation timed out` on sites with many FAQs. The WordPress AI client gives up after 30 seconds by default, which is not always enough when the whole FAQ catalog is sent as context. Hamelp now allows **60 seconds** for its own request only; a longer site-wide value set with `wp_ai_client_default_request_timeout` is kept as is. Adjust Hamelp's value with the new `hamelp_ai_request_timeout` filter. Your web server, proxy or CDN may still cut the request earlier, so check those timeouts too.
+- Restrict saved conversations to **Editors and above**. Previously, Contributors and Authors could open the admin conversation list, whose titles are visitors' first questions and may contain personal information. Saving and the scheduled cleanup are unaffected. Use the new `hamelp_conversation_capability` filter to change the required capability (e.g. `manage_options` for administrators only).
+- Tested up to WordPress 7.1.
 
 ### 2.6.0
 

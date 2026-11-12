@@ -248,4 +248,52 @@ class AiOverviewTest extends WP_UnitTestCase {
 
 		delete_option( 'hamelp_ai_overview_mode' );
 	}
+
+	/**
+	 * Hamelp raises the AI client's 30-second default to 60 seconds.
+	 */
+	public function test_request_timeout_raises_default() {
+		$this->assertSame( 60.0, FaqSearchService::filter_request_timeout( 30.0 ) );
+	}
+
+	/**
+	 * A longer site-wide timeout is never lowered.
+	 */
+	public function test_request_timeout_keeps_longer_site_value() {
+		$this->assertSame( 120.0, FaqSearchService::filter_request_timeout( 120.0 ) );
+	}
+
+	/**
+	 * The hamelp_ai_request_timeout filter adjusts Hamelp's minimum.
+	 */
+	public function test_request_timeout_filter() {
+		$callback = static function () {
+			return 90;
+		};
+		add_filter( 'hamelp_ai_request_timeout', $callback );
+		$this->assertSame( 90.0, FaqSearchService::filter_request_timeout( 30.0 ) );
+		$this->assertSame( 120.0, FaqSearchService::filter_request_timeout( 120.0 ) );
+		remove_filter( 'hamelp_ai_request_timeout', $callback );
+	}
+
+	/**
+	 * A non-numeric incoming value falls back to Hamelp's timeout.
+	 */
+	public function test_request_timeout_non_numeric_input() {
+		$this->assertSame( 60.0, FaqSearchService::filter_request_timeout( 'invalid' ) );
+	}
+
+	/**
+	 * Hamelp's callback respects a site-wide filter registered earlier at the same priority.
+	 */
+	public function test_request_timeout_respects_site_filter_through_hook_chain() {
+		$site = static function () {
+			return 120.0;
+		};
+		add_filter( 'wp_ai_client_default_request_timeout', $site );
+		add_filter( 'wp_ai_client_default_request_timeout', [ FaqSearchService::class, 'filter_request_timeout' ] );
+		$this->assertSame( 120.0, apply_filters( 'wp_ai_client_default_request_timeout', 30.0 ) );
+		remove_filter( 'wp_ai_client_default_request_timeout', [ FaqSearchService::class, 'filter_request_timeout' ] );
+		remove_filter( 'wp_ai_client_default_request_timeout', $site );
+	}
 }

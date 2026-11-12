@@ -75,18 +75,9 @@ class FaqSearchService {
 		}
 		$messages[] = new UserMessage( [ new MessagePart( $query ) ] );
 
-		/**
-		 * Filter the HTTP timeout (seconds) for FAQ overview generation.
-		 *
-		 * The whole FAQ catalog is sent as context, so a large site can exceed
-		 * the AI client's 30-second default. Scoped to Hamelp's own request only.
-		 *
-		 * @param float $timeout Timeout in seconds. Default 60.
-		 */
-		$timeout = static function () {
-			return (float) apply_filters( 'hamelp_ai_request_timeout', 60 );
-		};
-		// The AI client reads the default timeout in the builder's constructor.
+		// The AI client reads the default timeout in the builder's constructor,
+		// so the filter only needs to be in place while the builder is created.
+		$timeout = [ self::class, 'filter_request_timeout' ];
 		add_filter( 'wp_ai_client_default_request_timeout', $timeout );
 		$prompt = wp_ai_client_prompt( $messages )
 			->using_system_instruction( $system_prompt );
@@ -170,6 +161,31 @@ class FaqSearchService {
 			'sources'   => $sources,
 			'cited_ids' => $source_ids,
 		];
+	}
+
+	/**
+	 * Raise the AI client's request timeout for FAQ overview generation.
+	 *
+	 * Hooked to `wp_ai_client_default_request_timeout` only while Hamelp's own
+	 * prompt builder is created. Never lowers the incoming value, so a longer
+	 * site-wide timeout is kept.
+	 *
+	 * @param mixed $default_timeout Timeout in seconds from the AI client (or earlier filters).
+	 * @return float
+	 */
+	public static function filter_request_timeout( $default_timeout ): float {
+		/**
+		 * Filter the minimum HTTP timeout (seconds) for FAQ overview generation.
+		 *
+		 * The whole FAQ catalog is sent as context, so a large site can exceed
+		 * the AI client's 30-second default. A longer site-wide value set via
+		 * `wp_ai_client_default_request_timeout` takes precedence.
+		 *
+		 * @param float $timeout Timeout in seconds. Default 60.
+		 */
+		$timeout = (float) apply_filters( 'hamelp_ai_request_timeout', 60.0 );
+		$current = is_numeric( $default_timeout ) ? (float) $default_timeout : 0.0;
+		return max( $current, $timeout );
 	}
 
 	/**

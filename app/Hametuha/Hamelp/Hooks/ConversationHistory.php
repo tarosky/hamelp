@@ -82,12 +82,48 @@ class ConversationHistory extends Singleton {
 				'menu_position'       => 21,
 				'supports'            => [ 'title', 'editor', 'author' ],
 				'map_meta_cap'        => true,
-				// Read-only data: prevent creating new conversations by hand.
-				'capabilities'        => [
-					'create_posts' => 'do_not_allow',
-				],
+				'capabilities'        => $this->get_capabilities(),
 			]
 		);
+	}
+
+	/**
+	 * Capabilities for the conversation post type.
+	 *
+	 * Conversations contain what visitors typed, so they must not be visible to
+	 * every user who can write posts (the default `post` capabilities would let
+	 * Contributors list all conversations). Every primitive capability is mapped
+	 * to a single capability, Editor and above by default.
+	 *
+	 * @return array<string, string>
+	 */
+	public function get_capabilities() {
+		/**
+		 * Filter the capability required to view and manage stored conversations.
+		 *
+		 * @param string $capability Capability name. Default 'edit_others_posts' (Editor and above).
+		 */
+		$capability = (string) apply_filters( 'hamelp_conversation_capability', 'edit_others_posts' );
+		$caps       = [
+			// Read-only data: prevent creating new conversations by hand.
+			'create_posts' => 'do_not_allow',
+		];
+		foreach ( [
+			'read',
+			'read_private_posts',
+			'edit_posts',
+			'edit_others_posts',
+			'edit_published_posts',
+			'edit_private_posts',
+			'publish_posts',
+			'delete_posts',
+			'delete_others_posts',
+			'delete_published_posts',
+			'delete_private_posts',
+		] as $primitive ) {
+			$caps[ $primitive ] = $capability;
+		}
+		return $caps;
 	}
 
 	/**

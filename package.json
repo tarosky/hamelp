@@ -39,14 +39,14 @@
 	},
 	"homepage": "https://github.com/tarosky/hamelp",
 	"devDependencies": {
-		"@kunoichi/grab-deps": "^3.0.0",
+		"@kunoichi/grab-deps": "^3.3.0",
 		"@wordpress/env": "^10.38.0",
-		"@wordpress/scripts": "^30.0.0",
+		"@wordpress/scripts": "^37.2.0",
 		"autoprefixer": "^10.4.16",
 		"husky": "^9.1.7",
 		"lint-staged": "^17.0.8",
 		"npm-watch": "^0.13.0",
-		"postcss": "^8.5.16",
+		"postcss": "^8.5.33",
 		"postcss-cli": "^11.0.0",
 		"sass": "^1.83.0"
 	},
